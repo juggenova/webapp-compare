@@ -33,12 +33,14 @@ Quella che segue è la lista ipotetica dei requisiti che l'applicazione potrebbe
 
 La lista è lunga ma credo si possa imparare molto anche solo implementando il primo requisito.
 
+Un *requisito di processo* che sarebbe utile adottare è la memorizzazione del tempo impiegato per implementare ciascun punto. Infatti uno dei principali scopi dei framework è quello di ridurre il tempo di sviluppo, per cui questo valore deve essere un fattore di discussione durante il confronto. Il tempo può essere facilmente cronometrato con strumenti quali [Toggl Track](https://track.toggl.com/) che forniscono gratuitamente applicazioni native con cui gestire i timer e creare report finali.
+
 ## Partecipazione
 Chiunque può partecipare, ma solo se è intenzionato a presentare la sua implementazione al JUG.
 
 Il canale principale di comunicazione è il topic ["webapp-compare"](https://t.me/jug_genova/336) del [canale Telegram del JUG Genova](https://t.me/jug_genova).
 
-Esiste una sola regola, ovvero che si usi questo repository per li codice durante lo sviluppo, in modo da favorire la partecipazione e la condivisione. Mandatemi quindi la vostra richiesta e vi aggiungerò come utenti del repository in modo da poter fare push direttamente in un folder a voi dedicato.
+Esiste una sola regola, ovvero che si usi questo repository GitHub per li codice durante lo sviluppo, in modo da favorire la partecipazione e la condivisione. Mandatemi quindi la vostra richiesta e vi aggiungerò come utenti del repository in modo da poter fare push direttamente in un folder a voi dedicato.
 
 ## Deadline
 Considerati vari fattori, non viene fissata alcuna deadline. I risultati verranno proposti nei prossimi incontri man mano che saranno disponibili. Si può quindi considerare questa come una piattaforma aperta a cui è sempre possibile contribuire.
