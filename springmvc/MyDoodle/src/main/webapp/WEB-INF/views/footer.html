@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:yada="http://www.yadaframework.net">
+<body>
+	<footer>
+		<p>This is the footer</p>
+	</footer>
+	
+	<script th:if="${!@config.developmentEnvironment}" yada:src="@{/res/js/yada.min.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.ajax.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.cookieBanner.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.datatables.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.social.js}"></script>
+    <script yada:src="@{|/res/js/wcp${@config.min}.js|}" ></script>
+
+	<script type="text/javascript" th:inline="javascript">
+		//<![CDATA[
+			yada.devMode = /*[[${@config.isDevelopmentEnvironment()}]]*/ "unset";
+			yada.baseUrl = /*[[@{/}]]*/ "unset";
+			yada.resourceDir = /*[[${@config.versionedResourceDir}]]*/ "unset";
+			yada.messages.connectionError.title = /*[[#{javascript.connection.error.title}]]*/ "unset";
+			yada.messages.connectionError.message = /*[[#{javascript.connection.error.message}]]*/ "unset";
+		//]]>
+	</script>
+
+	<!--/* Notify modal */-->
+	<div th:include="/yada/modalNotify :: modal" class="modal fade" id="yada-notification" role="dialog"></div>
+
+</body>
+</html>

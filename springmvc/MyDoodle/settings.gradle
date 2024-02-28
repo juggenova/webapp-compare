@@ -1,0 +1,9 @@
+rootProject.name = 'MyDoodle'
+include 'YadaWeb'
+project(':YadaWeb').projectDir = "../../../yadaframework/YadaWeb" as File
+include 'YadaWebSecurity'
+project(':YadaWebSecurity').projectDir = "../../../yadaframework/YadaWebSecurity" as File
+include 'YadaWebCMS'
+project(':YadaWebCMS').projectDir = "../../../yadaframework/YadaWebCMS" as File
+include 'YadaWebCommerce'
+project(':YadaWebCommerce').projectDir = "../../../yadaframework/YadaWebCommerce" as File
