@@ -3,12 +3,12 @@
 	<info>
 		<env>dev</env>
 		<appName>MyDoodle</appName>
-		<version>0.1 alpha EXAMPLE</version>
+		<version>0.1 alpha</version>
 		<build>${build}</build>
 		<date>@@RELEASEDATE_PLACEHOLDER@@</date> <!-- Injected by gradle -->
 	</info>
 	<paths>
-		<serverAddress>http://dev.EXAMPLE.com/</serverAddress>
+		<serverAddress>http://wcptest:8080/</serverAddress>
 		<basePath>/srv/wcpdev</basePath>
 		<contentDir name="contents" url="/contents"></contentDir>
 	</paths>
@@ -30,40 +30,29 @@
 	<email>
 		<enabled>true</enabled>
 		<from>
-			<address>noreply@EXAMPLE.com</address>
-			<name>EXAMPLE SENDER</name>
+			<address>webappCompare@ghezzi.net</address>
+			<name>Webapp Compare</name>
 		</from>
 		
-		<support>
-			<!-- Addresses to which a support request is sent -->
-			<to>admin@EXAMPLE.com</to>
-		</support>
 		<logoImage>template/email/logo50.png</logoImage>
-		<smtpserver>
-			<host>smtp.EXAMPLE.com</host>
-			<port>587</port>
-			<protocol>smtp</protocol>
-			<username>${smtpserver_username}</username>
-			<password>${smtpserver_password}</password>
-			<!--  If set to true, and a message has some valid and some invalid addresses, send the message anyway, reporting the partial failure with a SendFailedException. If set to false (the default), the message is not sent to any of the recipients if there is an invalid recipient address.  -->
-			<properties>mail.smtp.sendpartial=true</properties> 
-			<properties>mail.smtp.auth=true</properties>
-			<properties>mail.smtp.starttls.enable=true</properties>
-			<properties>mail.smtp.quitwait=false</properties>
-			<!-- Set this option to your mail server if you trust it and don't care checking the certificate validity, e.g. it is on your localhost -->
-			<properties>mail.smtp.ssl.trust=smtp.EXAMPLE.com</properties>
-		</smtpserver>
 		<!-- Remove this list to enable email to everyone -->
-		<validEmail>EXAMPLE@EXAMPLE.com</validEmail>
-		<validEmail>EXAMPLE2@EXAMPLE.com</validEmail>
-		<validEmail>EXAMPLE3@EXAMPLE.net</validEmail>
+		<validEmail>ghzcst@gmail.com</validEmail>
+		<validEmail>test1@ghezzi.net</validEmail>
+		<validEmail>test2@ghezzi.net</validEmail>
+		<validEmail>test3@ghezzi.net</validEmail>
+		<validEmail>test4@ghezzi.net</validEmail>
 	</email>
 
-	<database>
+	<database enabled="false">
 		<jndiname>java:comp/env/jdbc/wcpdbdev</jndiname> <!-- Not used when <datasource> is defined -->
 		<showSql>false</showSql>
-		
 		<databaseMigrationAtStartup>false</databaseMigrationAtStartup>
+		<embedded enabled="false">
+			<datadir>/srv/wcpdev/embeddedDB</datadir>
+			<!-- Path of the sql file that will be loaded at startup -->
+			<sourceSql>/srv/wcpdev/source.sql</sourceSql>
+		</embedded>
+		
 		<!-- Datasource for embedded Tomcat -->
 		<datasource>
 			<jdbcUrl>jdbc:mysql://localhost/wcpdbdev?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</jdbcUrl>
@@ -85,23 +74,12 @@
 		</datasource>
 	</database>
 
-	<social>
-		<facebook>
-			<type>0</type>
-			<appId>EXAMPLE</appId>
-			<secret>EXAMPLE</secret>
-		</facebook>
-		<google>
-			<type>1</type>
-		</google>
-	</social>
-
 	<setup>
 		<users>
 			<user>
-				<nickname>admin</nickname> <!-- This is an example of UserProfile customization -->
-				<email>admin@EXAMPLE.com</email>
-				<password>myAppPassword</password>
+				<nickname>admin</nickname>
+				<email>admin@ghezzi.net</email>
+				<password>qweqwe</password>
 				<locale>en_US</locale>
 				<timezone>Europe/Rome</timezone>
 				<role>USER</role>

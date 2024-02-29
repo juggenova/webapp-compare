@@ -88,17 +88,6 @@
 		</datasource>
 	</database>
 
-	<social>
-		<facebook>
-			<type>0</type>
-			<appId>EXAMPLE</appId>
-			<secret>EXAMPLE</secret>
-		</facebook>
-		<google>
-			<type>1</type>
-		</google>
-	</social>
-
 	<setup>
 		<users>
 			<user>

@@ -10,13 +10,9 @@
 		<system/>
 		<env/>
 		<!-- security.properties contains sensitive values that should not be pushed to git -->
-		
 		<properties fileName="/srv/wcpdev/bin/security.properties" config-optional="true"/>
-		
 		<properties fileName="/srv/wcpcol/bin/security.properties" config-optional="true"/>
-		
 		<properties fileName="/srv/wcpprod/bin/security.properties" config-optional="true"/>
-		
 		<!-- build.properties is in WEB-INF, which is the parent folder of the execution context -->
 		<properties fileName="../build.properties" config-optional="true"/>
 		<properties fileName="net.yadaframework.yadaweb.properties"/>
@@ -29,7 +25,6 @@
 			reloadingRefreshDelay="4000" config-optional="true" config-reload="true">
 		</xml>
 
-		
 		<xml config-name="dev" config-at="config" fileName="conf.webapp.dev.xml" 
 			reloadingRefreshDelay="4000" config-optional="true" config-reload="true">
 		</xml>
