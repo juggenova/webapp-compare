@@ -9,9 +9,20 @@
 
 <th:block th:replace="~{/header :: body/header}"/>
 
-<main>
-	<h1>Home</h1>
-	<p>This is the home page</p>
+<main class="container">
+	<h1>Doodle Clone</h1>
+	<div>
+	 	<p>Spring MVC Version</p>
+	    <p>Author: Cristian Ghezzi</p>
+	</div>
+	<div class="pollAttributes">
+		<div>Titolo</div><div>Prossima riunione JUG</div>
+		<div>Descrizione</div><div>L'argomento dell'incontro sarà "JavaOne" in cui i veterani, tra
+		una grappetta e una birretta, ricorderanno i bei tempi andati.</div>
+		<div>Deadline</div><div>20 Ottobre 2024</div>
+	</div>
+	
+	<div th:replace="~{/choices :: body}"></div>
 </main>
 
 <th:block th:include="~{/footer :: body}"/>

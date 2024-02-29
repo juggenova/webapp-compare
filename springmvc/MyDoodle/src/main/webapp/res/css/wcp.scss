@@ -1,8 +1,28 @@
-header, footer {
-	height: 50px;
-    background-color: #f1f1f1;
+html {
+	font-size: 16px;
 }
 
-main {
-	height: 300px;
+body {
+	font-family: 'Ubuntu', sans-serif;
+}
+
+h1+div {
+	font-size: 0.8em;
+	line-height: 0.4em;
+}
+
+.pollAttributes {
+	margin: 2em 0;
+	display: grid;
+	grid-template-columns: auto auto; // Defines two columns with automatic width
+	gap: 10px; // Sets the gap between grid items
+
+	>div:nth-child(odd) {
+		font-weight: bold; // Makes the label divs bold
+		// Additional styling for labels can go here
+	}
+
+	>div:nth-child(even) {
+		// Additional styling for content divs can go here
+	}
 }

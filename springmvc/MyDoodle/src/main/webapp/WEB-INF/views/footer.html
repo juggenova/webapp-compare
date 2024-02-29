@@ -3,7 +3,6 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:yada="http://www.yadaframework.net">
 <body>
 	<footer>
-		<p>This is the footer</p>
 	</footer>
 	
 	<script th:if="${!@config.developmentEnvironment}" yada:src="@{/res/js/yada.min.js}"></script>
@@ -13,6 +12,7 @@
 	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.datatables.js}"></script>
 	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.social.js}"></script>
     <script yada:src="@{|/res/js/wcp${@config.min}.js|}" ></script>
+    <script yada:src="@{/static/bootstrap-5.3.3/js/bootstrap.bundle.min.js}" ></script>
 
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[

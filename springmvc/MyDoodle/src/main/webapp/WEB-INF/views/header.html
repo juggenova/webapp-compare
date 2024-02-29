@@ -6,10 +6,13 @@
 		<meta charset="UTF-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1">
+		<link rel="stylesheet" type="text/css" th:href="@{/static/bootstrap-5.3.3/css/bootstrap.min.css}" />
 		<link th:if="${@config.developmentEnvironment}" rel="stylesheet" type="text/css" th:href="@{/yadares/css/yada.css}" />
 	    <link th:if="${!@config.developmentEnvironment}" rel="stylesheet" type="text/css" th:href="@{/res/css/yada.min.css}" />
 		<link rel="stylesheet" type="text/css" th:href="@{/res/css/wcp.min.css}" />
+		<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
 	</th:block>
+	<title>Doodle Clone</title>
 </head>
 <body th:remove="tag">
 <script th:fragment="wcpready">
@@ -24,7 +27,6 @@
 </script>
 
 <header>
-	<p>This is the header</p>
 </header>
 </body>
 </html>
