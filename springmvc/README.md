@@ -39,5 +39,5 @@ Allo stesso modo ha scritto il CSS. Ho poi aggiunto Bootstrap per dare un defaul
 
 Il risultato è grezzo ma funzionale, per ora.
 
-![Screenshot](/readme.files/fase1-2.jpg)
+![Screenshot](/springmvc/readme.files/fase1-2.jpg)
 
