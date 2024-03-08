@@ -1,0 +1,35 @@
+# La V001 è lo schema iniziale
+
+create table Poll (endDay date, startDay date, deadline TIMESTAMP NULL null, id bigint not null auto_increment, version bigint not null, title varchar(32), description varchar(256), primary key (id)) engine=InnoDB;
+create table Vote (choice tinyint check (choice between 0 and 2), day datetime(6), id bigint not null auto_increment, poll_id bigint not null, version bigint not null, voter_id bigint not null, primary key (id)) engine=InnoDB;
+create table WcpRegistrationRequest (newsletterFlag bit, id bigint not null, name varchar(255), surname varchar(255), username varchar(255), primary key (id)) engine=InnoDB;
+create table YadaAttachedFile (height integer not null, heightDesktop integer, heightMobile integer, heightPdf integer, published bit not null, width integer not null, widthDesktop integer, widthMobile integer, widthPdf integer, id bigint not null auto_increment, modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, sortOrder bigint not null, uploadTimestamp TIMESTAMP NULL null, version bigint not null, metadata varchar(1024), clientFilename varchar(255), filename varchar(255), filenameDesktop varchar(255), filenameMobile varchar(255), filenamePdf varchar(255), forLocale varchar(255), relativeFolderPath varchar(255), primary key (id)) engine=InnoDB;
+create table YadaAttachedFile_description (YadaAttachedFile_id bigint not null, locale varchar(32) not null, description varchar(8192), primary key (YadaAttachedFile_id, locale)) engine=InnoDB;
+create table YadaAttachedFile_title (YadaAttachedFile_id bigint not null, locale varchar(32) not null, title varchar(1024), primary key (YadaAttachedFile_id, locale)) engine=InnoDB;
+create table YadaAutoLoginToken (expiration TIMESTAMP NULL null, id bigint not null auto_increment, timestamp TIMESTAMP NULL null, token bigint not null, version bigint not null, yadaUserCredentials_id bigint, primary key (id)) engine=InnoDB;
+create table YadaClause (clauseVersion integer not null, id bigint not null auto_increment, version bigint not null, name varchar(32) not null, content tinytext, primary key (id)) engine=InnoDB;
+create table YadaRegistrationRequest (registrationType tinyint check (registrationType between 0 and 3), id bigint not null auto_increment, timestamp TIMESTAMP NULL null, token bigint not null, trattamentoDati_id bigint, version bigint not null, yadaUserCredentials_id bigint, email varchar(64) not null, timezone varchar(64), password varchar(128) not null, primary key (id)) engine=InnoDB;
+create table YadaSocialCredentials (type integer not null, id bigint not null auto_increment, version bigint not null, yadaUserCredentials_id bigint not null, email varchar(128) not null, socialId varchar(128) not null, primary key (id)) engine=InnoDB;
+create table YadaUserCredentials (changePassword bit not null, enabled bit not null, failedAttempts integer not null, creationDate TIMESTAMP NULL null, id bigint not null auto_increment, lastFailedAttempt TIMESTAMP NULL null, lastSuccessfulLogin TIMESTAMP NULL null, passwordDate TIMESTAMP NULL null, version bigint not null, password varchar(128) not null, username varchar(128) not null, primary key (id)) engine=InnoDB;
+create table YadaUserCredentials_roles (roles integer, YadaUserCredentials_id bigint not null) engine=InnoDB;
+create table YadaUserProfile (timezoneSetByUser bit not null, avatar_id bigint, id bigint not null auto_increment, userCredentials_id bigint not null, version bigint not null, DTYPE varchar(31) not null, firstName varchar(32), locale varchar(32), middleName varchar(32), nickname varchar(32), lastName varchar(64), timezone varchar(64), primary key (id)) engine=InnoDB;
+alter table YadaAutoLoginToken add constraint UK_gpwvvntka6p2tjtnut6qiokyi unique (yadaUserCredentials_id);
+alter table YadaClause add constraint UKek0brxiv78vf6idvd6dv8v69d unique (name, clauseVersion);
+alter table YadaRegistrationRequest add constraint UK_66pbcq6oohrfjqwr1o7wslucn unique (trattamentoDati_id);
+alter table YadaRegistrationRequest add constraint UK_b0i98ixarlwa54gkxws9ykxae unique (yadaUserCredentials_id);
+alter table YadaSocialCredentials add constraint UK_1uppa4u7bksphbjwm4i2c8re9 unique (socialId);
+alter table YadaUserCredentials add constraint UK_6gbgs7fb7g5t4wo0ys7e5q31j unique (username);
+alter table YadaUserProfile add constraint UK_q1b54fx8m1fu9budmpt2tm80i unique (avatar_id);
+alter table YadaUserProfile add constraint UK_3bjn82k5gj41f9ocejoxx1uua unique (userCredentials_id);
+alter table Vote add constraint FK34cunlfwlpao9xym0oo0syoox foreign key (poll_id) references Poll (id);
+alter table Vote add constraint FKnxfr3qxj4kvlppeypu8tsuc0t foreign key (voter_id) references YadaUserProfile (id);
+alter table WcpRegistrationRequest add constraint FKnq43jk0lbgykrnch7otlskvxl foreign key (id) references YadaRegistrationRequest (id);
+alter table YadaAttachedFile_description add constraint FKj1954nnr3hu07yak1tyb4inc6 foreign key (YadaAttachedFile_id) references YadaAttachedFile (id);
+alter table YadaAttachedFile_title add constraint FKqawwx1dakd1a91pxgappdycka foreign key (YadaAttachedFile_id) references YadaAttachedFile (id);
+alter table YadaAutoLoginToken add constraint FKh92vo7me2k2s4v1x1jercpuo foreign key (yadaUserCredentials_id) references YadaUserCredentials (id);
+alter table YadaRegistrationRequest add constraint FKkn2yxfy3t9fjmuannqfph49d0 foreign key (trattamentoDati_id) references YadaClause (id);
+alter table YadaRegistrationRequest add constraint FKq6guqxscpqqq7pl96md1y79rn foreign key (yadaUserCredentials_id) references YadaUserCredentials (id);
+alter table YadaSocialCredentials add constraint FK72s54ufexgh2xk2122ihkc82l foreign key (yadaUserCredentials_id) references YadaUserCredentials (id);
+alter table YadaUserCredentials_roles add constraint FK1oj60uojdn4xql004wfe2v0hp foreign key (YadaUserCredentials_id) references YadaUserCredentials (id);
+alter table YadaUserProfile add constraint FKpi28ogwa7vguwb3vv1tkmpovi foreign key (avatar_id) references YadaAttachedFile (id);
+alter table YadaUserProfile add constraint FKm8x7qmacvae25wmfdhnuf4e25 foreign key (userCredentials_id) references YadaUserCredentials (id);

@@ -63,7 +63,7 @@
 		<jndiname>java:comp/env/jdbc/wcpdbcol</jndiname> <!-- Not used when <datasource> is defined -->
 		<showSql>false</showSql>
 		
-		<databaseMigrationAtStartup>false</databaseMigrationAtStartup>
+		<databaseMigrationAtStartup>true</databaseMigrationAtStartup>
 		<!-- Datasource for embedded Tomcat -->
 		<datasource>
 			<jdbcUrl>jdbc:mysql://localhost/wcpdbcol?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</jdbcUrl>

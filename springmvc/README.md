@@ -8,7 +8,7 @@ Lo stack tecnologico, a fine lavori, sarà il seguente:
 - [Java 17](https://www.oracle.com/java/technologies/downloads/#java17)
 - [Spring MVC](https://docs.spring.io/spring-framework/reference/web/webmvc.html)
 - [Spring Security](https://spring.io/projects/spring-security)
-- [Hibernate ORM](https://hibernate.org/orm/)
+- [Hibernate ORM](https://hibernate.org/orm/) con JPA
 - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)/[MariaDB](https://mariadb.org/)
 - [Thymeleaf](https://www.thymeleaf.org/)
 - [Tomcat 8/10 (embedded)](https://tomcat.apache.org/)
@@ -21,14 +21,18 @@ Lo Yada Framework non è che una mia raccolta di librerie, utility, snippet e pa
 
 Altre librerie e tool che uso e vorrei menzionare sono [Commons Configuration](https://commons.apache.org/proper/commons-configuration/), [FlyWay](https://flywaydb.org/), [Logback](https://logback.qos.ch/), [Gradle Build Tool](https://gradle.org/), [SASS](https://sass-lang.com/).
 
-Qui sotto descriverò una fase per ogni requisito previsto, indicando il tempo impiegato in hh:mm (escludendo la scrittura della documentazione).
+Qui sotto descriverò i passi di sviluppo in fasi dove ogni fase implementa uno o più requisiti, indicando il tempo impiegato in hh:mm (escludendo la scrittura della documentazione). Su git metterò un tag per ogni fase in modo che si possano vedere facilmente le differenze.
 
 ## Fase 0: setup iniziale (1:04)
 Con "setup iniziale" intendo tutto ciò che occorre per creare un ambiente di sviluppo che mi consenta di visualizzare una pagina web vuota caricata da server. Generalmente questo comprende anche il database, ma visto che la persistenza dei voti è posticipata al requisito 3, ho aspettato.
 
 Chi volesse cimentarsi con l'installazione di tale setup può seguire le istruzioni dello Yada Framework al capitolo ["Getting Started"](https://yadaframework.net/en/newEclipseProject.html). Il tutto è pensato per girare su Eclipse ma credo servano pochi adattamenti per usare altri IDE.
 
-## Fase 1+2: poll cablato (0:54)
+Se invece si volesse lanciare il server senza ricorrere a un IDE, occorre fare il checkout del webapp-compare e dello Yada Framework in un root folder comune, quindi lanciare runSite.bat che si trova nel folder MyDoodle.
+
+## Fase 1: poll cablato (0:54)
+*Requisiti 1+2*
+
 Il codice HTML del poll l'ha scritto ChatGPT con questa sequenza di prompt:
 
 	- Make a radio with 3 elements: Yes, No, Maybe
@@ -40,4 +44,23 @@ Allo stesso modo ha scritto il CSS. Ho poi aggiunto Bootstrap per dare un defaul
 Il risultato è grezzo ma funzionale, per ora.
 
 ![Screenshot](/springmvc/readme.files/fase1-2.jpg)
+
+## Fase 2: salvataggio e modifica
+*Requisito 3*
+
+Per iniziare uso un database MariaDB embedded così chi vuole provare non deve avere MySQL. Lo abilito cambiando la configurazione in `conf.webapp.dev.xml`. Il db viene salvato in `/srv/wcpdev/embeddedDB` (path configurabile). E' tutto già implementato in Yada Framework.
+
+Parto con la definizione degli @Entity da cui genero lo schema del database automaticamente con il task gradle "dbSchema". Copio lo schema tra i resource files dell'applicazione (`V001__baseline.sql`) in modo che FlyWay lo carichi sul DB allo startup se manca. 
+Allo stesso modo, dopo una modifica alle entity, rigenero lo schema e metto le differenze dal precedente in un `V002__votefix.sql` che FlyWay eseguirà solo se non l'ha già eseguito. Questo consente di versionare il database e portare le modifiche in tutti gli ambienti.
+
+Il mio modello è costituito dalle classi Poll e Vote. Creo un Poll "cablato" di default quando manca nel database ma per ora non lo uso visto che i poll dinamici sono il requisito 12.
+Nel file `choices.html` per visualizzare la precedente scelta fatta (default a NO) carico tutti i Vote dal db (so che per ora sono tutti dello stesso poll e dello stesso user) e assegno il loro valore ai radio. 
+
+Il fatto che l'HTML sia ancora cablato rende tutto più macchinoso e dopo qualche tentativo mi rendo conto che non conviene seguire la scaletta dei requisiti ma passare direttamente al poll dinamico per non perdere troppo tempo in cose inutili. Inizializzo quindi il db con un poll e relativi voti messi al valore di default, e nell'HTML uso thymeleaf per iterare sui voti e presentare la scelta, mostrando il valore attuale.
+Mi viene comodo introdurre già la localizzazione delle label mettendo i valori in message.properties.
+
+Per memorizzare il voto invio la scelta al server via ajax (più moderno di un submit classico) e la salvo nel db.
+
+
+
 

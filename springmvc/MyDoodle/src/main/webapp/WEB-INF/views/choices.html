@@ -6,64 +6,22 @@
 </head>
 
 <body th:remove="tag">
-	<form>
-
-		<!-- Day 1 -->
-		<fieldset>
-			<legend>Venerdì 1</legend>
-			<label><input type="radio" name="day1" value="yes"> Yes</label>
-			<label><input type="radio" name="day1" value="no" checked> No</label>
-			<label><input type="radio" name="day1" value="maybe"> Maybe</label>
-		</fieldset>
-
-		<!-- Day 2 -->
-		<fieldset>
-			<legend>Sabato 2</legend>
-			<label><input type="radio" name="day2" value="yes"> Yes</label>
-			<label><input type="radio" name="day2" value="no" checked> No</label>
-			<label><input type="radio" name="day2" value="maybe"> Maybe</label>
-		</fieldset>
-
-		<!-- Day 3 -->
-		<fieldset>
-			<legend>Domenica 3</legend>
-			<label><input type="radio" name="day3" value="yes"> Yes</label>
-			<label><input type="radio" name="day3" value="no" checked> No</label>
-			<label><input type="radio" name="day3" value="maybe"> Maybe</label>
-		</fieldset>
-
-		<!-- Day 4 -->
-		<fieldset>
-			<legend>Lunedì 4</legend>
-			<label><input type="radio" name="day4" value="yes"> Yes</label>
-			<label><input type="radio" name="day4" value="no" checked> No</label>
-			<label><input type="radio" name="day4" value="maybe"> Maybe</label>
-		</fieldset>
-
-		<!-- Day 5 -->
-		<fieldset>
-			<legend>Martedì 5</legend>
-			<label><input type="radio" name="day5" value="yes"> Yes</label>
-			<label><input type="radio" name="day5" value="no" checked> No</label>
-			<label><input type="radio" name="day5" value="maybe"> Maybe</label>
-		</fieldset>
-
-		<!-- Day 6 -->
-		<fieldset>
-			<legend>Mercoledì 6</legend>
-			<label><input type="radio" name="day6" value="yes"> Yes</label>
-			<label><input type="radio" name="day6" value="no" checked> No</label>
-			<label><input type="radio" name="day6" value="maybe"> Maybe</label>
-		</fieldset>
-
-		<!-- Day 7 -->
-		<fieldset>
-			<legend>Giovedì 7</legend>
-			<label><input type="radio" name="day7" value="yes"> Yes</label>
-			<label><input type="radio" name="day7" value="no" checked> No</label>
-			<label><input type="radio" name="day7" value="maybe"> Maybe</label>
-		</fieldset>
-	</form>
+	
+	<div th:each="vote, iterStat : ${sortedVotes}">
+		<form th:action="@{/castVote}" class="choiceForm">
+		    <fieldset>
+				<input type="hidden" name="pollId" th:value="${poll.id}">
+				<input type="hidden" name="voteId" th:value="${vote.id}">
+		        <legend th:text="${#dates.format(vote.day, 'EEEE d')}"></legend>
+		        
+		        <label th:each="choiceValue : ${T(net.ghezzi.jugg.wcp.persistence.entity.Choice).values()}">
+		        	<input type="radio" name="choice" th:value="${choiceValue}" th:checked="${vote.choice==choiceValue}"> 
+		        	[[#{|label.choice.${choiceValue}|}]]
+		        </label>
+		    </fieldset>
+		</form>
+	</div>
+	
 
 
 </body>

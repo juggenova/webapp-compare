@@ -43,14 +43,15 @@
 		<validEmail>test4@ghezzi.net</validEmail>
 	</email>
 
-	<database enabled="false">
+	<database enabled="true">
 		<jndiname>java:comp/env/jdbc/wcpdbdev</jndiname> <!-- Not used when <datasource> is defined -->
 		<showSql>false</showSql>
-		<databaseMigrationAtStartup>false</databaseMigrationAtStartup>
+		<databaseMigrationAtStartup>true</databaseMigrationAtStartup>
 		<embedded enabled="false">
 			<datadir>/srv/wcpdev/embeddedDB</datadir>
-			<!-- Path of the sql file that will be loaded at startup -->
+			<!-- Path of the sql file that will be loaded at startup 
 			<sourceSql>/srv/wcpdev/source.sql</sourceSql>
+			-->
 		</embedded>
 		
 		<!-- Datasource for embedded Tomcat -->

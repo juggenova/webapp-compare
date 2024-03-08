@@ -1,28 +1,31 @@
 package net.ghezzi.jugg.wcp.web;
 
+import static net.yadaframework.components.YadaUtil.messageSource;
+
 import java.util.List;
 import java.util.Locale;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpServletRequest;
+import net.ghezzi.jugg.wcp.core.WcpConfiguration;
+import net.ghezzi.jugg.wcp.persistence.entity.Poll;
+import net.ghezzi.jugg.wcp.persistence.entity.UserProfile;
+import net.ghezzi.jugg.wcp.persistence.entity.Vote;
+import net.ghezzi.jugg.wcp.persistence.repository.PollDao;
+import net.ghezzi.jugg.wcp.persistence.repository.UserProfileDao;
+import net.ghezzi.jugg.wcp.persistence.repository.VoteDao;
 import net.yadaframework.components.YadaNotify;
 import net.yadaframework.components.YadaWebUtil;
 import net.yadaframework.core.YadaLocalePathChangeInterceptor;
 import net.yadaframework.security.YadaSecurityConfig;
 import net.yadaframework.security.components.YadaSecurityUtil;
 import net.yadaframework.web.YadaViews;
-
-import net.ghezzi.jugg.wcp.core.WcpConfiguration;
-
-import static net.yadaframework.components.YadaUtil.messageSource;
 
 @Controller
 public class HomeController {
@@ -32,6 +35,17 @@ public class HomeController {
 	@Autowired private YadaSecurityUtil yadaSecurityUtil;
 	@Autowired private YadaNotify yadaNotify;
 	@Autowired private WcpConfiguration config;
+
+	private @Autowired PollDao pollDao;
+	private @Autowired VoteDao voteDao;
+	private @Autowired UserProfileDao userProfileDao;
+	
+	
+	@RequestMapping("/castVote")
+	public String castVote(Poll poll, Vote vote, Model model) {
+		// TODO
+		return "/home";
+	}
 
 	/**
 	 * Called after session timeout
@@ -57,6 +71,7 @@ public class HomeController {
 			|| yadaWebUtil.isErrorPage(request)
 			|| model.containsAttribute("login")) {
 			// Should normally get here
+			insertPollData(model);
 			return "/home";
 		}
 		// The locale is missing so set it explicitly with a redirect. 
@@ -64,6 +79,23 @@ public class HomeController {
 		// to either an accepted locale or the platform default.
 		return yadaWebUtil.redirectString("/", locale); // Moved temporarily
 	}
+	
+	/**
+	 * Aggiunge al model i voti eventualmente già dati
+	 * @param model
+	 */
+	private void insertPollData(Model model) {
+		Poll poll = pollDao.findDefault(); // Per ora c'è solo un Poll cablato
+		// Per ora uso l'utente di default
+		UserProfile currentUser = userProfileDao.findUserProfileByUsername("admin@ghezzi.net");
+		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
+		model.addAttribute("poll", poll);
+		model.addAttribute("sortedVotes", sortedVotes);
+	}
+
+	//////////////////////////////////////////////////////////////////////
+	// I metodi che seguono sono stati autogenerati e serviranno in futuro
+	//////////////////////////////////////////////////////////////////////
 
 	/**
 	 * This method should be called when the user clicks on a login link explicitly

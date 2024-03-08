@@ -25,7 +25,7 @@
 	<div th:replace="~{/choices :: body}"></div>
 </main>
 
-<th:block th:include="~{/footer :: body}"/>
+<th:block th:replace="~{/footer :: body}"/>
 
 <th:block th:if="${login}!=null">
 	<div th:replace="/modalLogin :: #loginModal"></div>

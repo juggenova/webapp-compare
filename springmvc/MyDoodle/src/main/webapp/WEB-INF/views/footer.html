@@ -5,14 +5,15 @@
 	<footer>
 	</footer>
 	
-	<script th:if="${!@config.developmentEnvironment}" yada:src="@{/res/js/yada.min.js}"></script>
-	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.js}"></script>
-	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.ajax.js}"></script>
-	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.cookieBanner.js}"></script>
-	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.datatables.js}"></script>
-	<script th:if="${@config.developmentEnvironment}" yada:src="@{/yadares/js/yada.social.js}"></script>
-    <script yada:src="@{|/res/js/wcp${@config.min}.js|}" ></script>
-    <script yada:src="@{/static/bootstrap-5.3.3/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/static/jquery-3.7.1.min.js}" ></script>
+	<script th:if="${!@config.developmentEnvironment}" th:src="@{/res/js/yada.min.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" th:src="@{/yadares/js/yada.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" th:src="@{/yadares/js/yada.ajax.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" th:src="@{/yadares/js/yada.cookieBanner.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" th:src="@{/yadares/js/yada.datatables.js}"></script>
+	<script th:if="${@config.developmentEnvironment}" th:src="@{/yadares/js/yada.social.js}"></script>
+    <script th:src="@{|/res/js/wcp${@config.min}.js|}" ></script>
+    <script th:src="@{/static/bootstrap-5.3.3/js/bootstrap.bundle.min.js}" ></script>
 
 	<script type="text/javascript" th:inline="javascript">
 		//<![CDATA[
@@ -25,7 +26,7 @@
 	</script>
 
 	<!--/* Notify modal */-->
-	<div th:include="/yada/modalNotify :: modal" class="modal fade" id="yada-notification" role="dialog"></div>
+	<div th:insert="~{/yada/modalNotify :: modal-content}" class="modal fade" id="yada-notification" role="dialog"></div>
 
 </body>
 </html>
