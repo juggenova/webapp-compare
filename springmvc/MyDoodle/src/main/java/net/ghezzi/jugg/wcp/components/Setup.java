@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
-import net.ghezzi.jugg.wcp.persistence.entity.Choice;
+import net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
 import net.ghezzi.jugg.wcp.persistence.entity.UserProfile;
 import net.ghezzi.jugg.wcp.persistence.entity.Vote;
@@ -28,6 +28,7 @@ public class Setup extends YadaUserSetup<UserProfile> {
 	
 	 @Override
 	 protected void setupApplication() {
+		 /* Parte dinamica per ora rimossa
 		 // Devo assicurarmi che l'utente sia già stato creato
 		 List<Map<String, Object>> userList = config.getSetupUsers();
 		 setupUsers(userList);
@@ -61,6 +62,7 @@ public class Setup extends YadaUserSetup<UserProfile> {
 				voteDao.save(vote);
 			}
 		 }
+		 */
 	 }
 }
 

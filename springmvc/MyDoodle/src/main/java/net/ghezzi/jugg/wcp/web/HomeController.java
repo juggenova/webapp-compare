@@ -2,6 +2,7 @@ package net.ghezzi.jugg.wcp.web;
 
 import static net.yadaframework.components.YadaUtil.messageSource;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
+import net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
 import net.ghezzi.jugg.wcp.persistence.entity.UserProfile;
 import net.ghezzi.jugg.wcp.persistence.entity.Vote;
@@ -42,9 +44,20 @@ public class HomeController {
 	
 	
 	@RequestMapping("/castVote")
-	public String castVote(Poll poll, Vote vote, Model model) {
-		// TODO
-		return "/home";
+	public String castVote(Integer index, ChoiceEnum voted, Model model) {
+		List<Vote> sortedVotes = voteDao.findVotes(null, null);
+		Vote toChange = null;
+		if (index>=sortedVotes.size()) {
+			toChange = new Vote();
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(2024, Calendar.NOVEMBER, index+1, 0, 0, 0);
+			toChange.setDay(calendar.getTime());
+		} else {
+			toChange = sortedVotes.get(index);
+		}
+		toChange.setChoice(voted);
+		toChange = voteDao.save(toChange);
+		return goHome(model);
 	}
 
 	/**
@@ -60,6 +73,11 @@ public class HomeController {
 		yadaNotify.title(title, model).message(text).info().redirectOnClose("/").add();
 		return "/home";
 	}
+	
+	private String goHome(Model model) {
+		insertPollData(model);
+		return "/home";
+	}
 
 	@RequestMapping("/")
 	public String home(HttpServletRequest request, Model model, Locale locale) {
@@ -70,9 +88,7 @@ public class HomeController {
 			|| YadaLocalePathChangeInterceptor.localePathRequested(request) 
 			|| yadaWebUtil.isErrorPage(request)
 			|| model.containsAttribute("login")) {
-			// Should normally get here
-			insertPollData(model);
-			return "/home";
+			return goHome(model);
 		}
 		// The locale is missing so set it explicitly with a redirect. 
 		// The "locale" variable has already been normalized by YadaWebConfig.localeResolver()
@@ -85,11 +101,16 @@ public class HomeController {
 	 * @param model
 	 */
 	private void insertPollData(Model model) {
+		Poll poll = null;
+		UserProfile currentUser = null;
+		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
+		/* Parte dinamica per ora rimossa
 		Poll poll = pollDao.findDefault(); // Per ora c'è solo un Poll cablato
 		// Per ora uso l'utente di default
 		UserProfile currentUser = userProfileDao.findUserProfileByUsername("admin@ghezzi.net");
 		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
 		model.addAttribute("poll", poll);
+		*/
 		model.addAttribute("sortedVotes", sortedVotes);
 	}
 

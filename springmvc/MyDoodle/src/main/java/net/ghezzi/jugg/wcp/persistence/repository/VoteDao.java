@@ -26,10 +26,10 @@ public class VoteDao {
 	 */
 	public List<Vote> findVotes(UserProfile userProfile, Poll poll) {
 		YadaSql yadaSql = YadaSql.instance().selectFrom("select v from Vote v")
-			.join("join v.poll p")
-			.join("join v.voter u")
-			.where("where p=:poll").and()
-			.where("where u=:userProfile").and()
+			.join(poll!=null, "join v.poll p")
+			.join(userProfile!=null, "join v.voter u")
+			.where(poll!=null, "where p=:poll").and()
+			.where(userProfile!=null, "where u=:userProfile").and()
 			.orderBy("v.day asc")
 			.setParameter("poll", poll)
 			.setParameter("userProfile", userProfile);

@@ -6,22 +6,39 @@
 </head>
 
 <body th:remove="tag">
-	
-	<div th:each="vote, iterStat : ${sortedVotes}">
-		<form th:action="@{/castVote}" class="choiceForm">
-		    <fieldset>
-				<input type="hidden" name="pollId" th:value="${poll.id}">
-				<input type="hidden" name="voteId" th:value="${vote.id}">
-		        <legend th:text="${#dates.format(vote.day, 'EEEE d')}"></legend>
-		        
-		        <label th:each="choiceValue : ${T(net.ghezzi.jugg.wcp.persistence.entity.Choice).values()}">
-		        	<input type="radio" name="choice" th:value="${choiceValue}" th:checked="${vote.choice==choiceValue}"> 
-		        	[[#{|label.choice.${choiceValue}|}]]
-		        </label>
-		    </fieldset>
-		</form>
+	<div th:with="
+		YES=${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).YES},
+		NO=${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).NO},
+		MAYBE=${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).MAYBE}">
+		
+		<th:block th:with="dayIndex=0,dayName='Venerdì'">
+			<form th:action="@{/castVote}" class="choiceForm yadaAjax" th:fragment="voteFragment(dayIndex,dayName)">
+				<input type="hidden" name="index" th:value="${dayIndex}">
+				<fieldset th:with="choice=${sortedVotes.size()>dayIndex?sortedVotes[dayIndex].choice:NO}">
+					<legend>[[|${dayName} ${dayIndex+1}|]]</legend>
+					<label><input type="radio" name="voted" value="YES" th:checked="${choice==YES}"> Yes</label>
+					<label><input type="radio" name="voted" value="NO" th:checked="${choice==NO}"> No</label>
+					<label><input type="radio" name="voted" value="MAYBE" th:checked="${choice==MAYBE}"> Maybe</label>
+				</fieldset>
+			</form>
+		</th:block>
+		
+		<div th:replace="~{::voteFragment(1,'Sabato')}"></div>
+		<div th:replace="~{::voteFragment(2,'Domenica')}"></div>
+		<div th:replace="~{::voteFragment(3,'Lunedì')}"></div>
+		<div th:replace="~{::voteFragment(4,'Martedì')}"></div>
+		<div th:replace="~{::voteFragment(5,'Mercoledì')}"></div>
+		<div th:replace="~{::voteFragment(6,'Giovedì')}"></div>
+
 	</div>
 	
+	<script>
+		wcp.ready(function(){
+			$("form.choiceForm input").change(function() {
+				$(this).closest("form").submit();
+			});
+		});
+	</script>
 
 
 </body>

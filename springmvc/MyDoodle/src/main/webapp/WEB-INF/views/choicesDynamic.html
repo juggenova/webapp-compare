@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:yada="http://www.yadaframework.net">
+
+<head>
+	<meta charset="UTF-8">
+</head>
+
+<body th:remove="tag">
+	
+	<div th:each="vote, iterStat : ${sortedVotes}">
+		<form th:action="@{/castVote}" class="choiceForm">
+		    <fieldset>
+				<input type="hidden" name="pollId" th:value="${poll.id}">
+				<input type="hidden" name="voteId" th:value="${vote.id}">
+		        <legend th:text="${#dates.format(vote.day, 'EEEE d')}"></legend>
+		        
+		        <label th:each="choiceValue : ${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).values()}">
+		        	<input type="radio" name="choice" th:value="${choiceValue}" th:checked="${vote.choice==choiceValue}"> 
+		        	[[#{|label.choice.${choiceValue}|}]]
+		        </label>
+		    </fieldset>
+		</form>
+	</div>
+	
+
+
+</body>
+
+</html>

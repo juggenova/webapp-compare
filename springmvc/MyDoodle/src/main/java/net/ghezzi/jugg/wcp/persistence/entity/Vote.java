@@ -27,16 +27,18 @@ public class Vote {
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	protected Long id;
 	
-	@ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
+	// @ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
+	@ManyToOne(optional=true) // To be removed
 	private Poll poll;
 	
-	@ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
+	// @ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
+	@ManyToOne(optional=true) // To be removed
 	private UserProfile voter;
 	
 	@Temporal(TemporalType.DATE)
 	private Date day;
 	
-	private Choice choice;
+	private ChoiceEnum choice;
 
 	public Poll getPoll() {
 		return poll;
@@ -62,11 +64,11 @@ public class Vote {
 		this.day = day;
 	}
 
-	public Choice getChoice() {
+	public ChoiceEnum getChoice() {
 		return choice;
 	}
 
-	public void setChoice(Choice choice) {
+	public void setChoice(ChoiceEnum choice) {
 		this.choice = choice;
 	}
 
