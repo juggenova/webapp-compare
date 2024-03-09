@@ -45,22 +45,20 @@ Il risultato è grezzo ma funzionale, per ora.
 
 ![Screenshot](/springmvc/readme.files/fase1-2.jpg)
 
-## Fase 2: salvataggio e modifica
+## Fase 2: salvataggio e modifica (4:10)
 *Requisito 3*
 
-Per iniziare uso un database MariaDB embedded così chi vuole provare non deve avere MySQL. Lo abilito cambiando la configurazione in `conf.webapp.dev.xml`. Il db viene salvato in `/srv/wcpdev/embeddedDB` (path configurabile). E' tutto già implementato in Yada Framework.
+Ho configurato un database MariaDB embedded così chi vuole provare non deve avere MySQL ma basta che lanci l'applicazione e parte. Si abilita cambiando la configurazione in `conf.webapp.dev.xml`. Il db viene salvato in `/srv/wcpdev/embeddedDB` (path configurabile). E' tutto già implementato in Yada Framework.
 
-Parto con la definizione degli @Entity da cui genero lo schema del database automaticamente con il task gradle "dbSchema". Copio lo schema tra i resource files dell'applicazione (`V001__baseline.sql`) in modo che FlyWay lo carichi sul DB allo startup se manca. 
-Allo stesso modo, dopo una modifica alle entity, rigenero lo schema e metto le differenze dal precedente in un `V002__votefix.sql` che FlyWay eseguirà solo se non l'ha già eseguito. Questo consente di versionare il database e portare le modifiche in tutti gli ambienti.
+Ho iniziato con la definizione degli @Entity da cui generare lo schema del database automaticamente con il task gradle "dbSchema". Ho copiato lo schema tra i resource files dell'applicazione (`V001__baseline.sql`) in modo che FlyWay lo carichi sul DB allo startup se manca. 
 
-Il mio modello è costituito dalle classi Poll e Vote. Creo un Poll "cablato" di default quando manca nel database ma per ora non lo uso visto che i poll dinamici sono il requisito 12.
-Nel file `choices.html` per visualizzare la precedente scelta fatta (default a NO) carico tutti i Vote dal db (so che per ora sono tutti dello stesso poll e dello stesso user) e assegno il loro valore ai radio. 
+Il mio modello è costituito dalle classi `Poll` e `Vote`. Per il momento, visto che è tutto cablato, uso solo `Vote`.
 
-Il fatto che l'HTML sia ancora cablato rende tutto più macchinoso e dopo qualche tentativo mi rendo conto che non conviene seguire la scaletta dei requisiti ma passare direttamente al poll dinamico per non perdere troppo tempo in cose inutili. Inizializzo quindi il db con un poll e relativi voti messi al valore di default, e nell'HTML uso thymeleaf per iterare sui voti e presentare la scelta, mostrando il valore attuale.
-Mi viene comodo introdurre già la localizzazione delle label mettendo i valori in message.properties.
+Mentre faccio l'HTML mi sembra che avere tutto cablato renda l'implementazione eccessivamente laboriosa visto che si tratta di replicare tutto per sette volte (i sette giorni) e dopo qualche tentativo ho deciso che non conviene seguire la scaletta dei requisiti ma di passare direttamente al poll dinamico per non perdere troppo tempo in cose inutili.
+Ho istanziato quindi un `Poll` di default con i suoi sette `Vote`, e scritto un HTML che mostra i `Vote` esistenti e accetta i voti dell'utente. Ho speso tre ore per fare e rifare tutto, poi mi sono pentito perché si perde lo scopo, ovvero il confronto con l'approccio adottato su altre piattaforme. Ho quindi riscritto l'HTML in maniera quasi-statica, nel senso che il poll è sì cablato ma grazie a Thymeleaf non devo ripetere tutto. 
 
 Per memorizzare il voto invio la scelta al server via ajax (più moderno di un submit classico) e la salvo nel db.
 
-
+Per fare solo la versione finale impiego un'ora, ma il tempo speso per il resto lo recupererò più avanti.
 
 
