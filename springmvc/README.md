@@ -61,4 +61,18 @@ Per memorizzare il voto invio la scelta al server via ajax (più moderno di un s
 
 Per fare solo la versione finale impiego un'ora, ma il tempo speso per il resto lo recupererò più avanti.
 
+## Fase 3: utenti fake distinti (1:10)
+*Requisito 4*
+
+Questa fase mi è venuta abbastanza velocemente perché avevo già gli utenti nel db pronti per essere usati (creati da Yada in fase 0).
+Ho quindi chiesto a ChatGPT il codice js per creare lo uuid e metterlo in un cookie (avevo inizialmente usato localstorage ma mi sono poi scontrato col fatto che al primo load della pagina, visto che il poll è subito lì, non potevo mandare lo uuid al server). Sempre ChatGPT ha scritto la funzione java per prelevare il cookie dalla request.
+
+Ho poi fatto una piccola modifica al model, rigenerato lo schema, e creato un nuovo script per FlyWay in modo da aggiornare il database allo startup, allineando tutti gli eventuali ambienti.
+
+Adesso ogni voto è associato a un utente per cui in teoria la webapp è multiutente, sempre con la limitazione che non c'è ancora il login e per entrare con un nuovo utente bisogna cancellare il cookie.
+
+![Screenshot](/springmvc/readme.files/fase4.jpg)
+
+
+
 

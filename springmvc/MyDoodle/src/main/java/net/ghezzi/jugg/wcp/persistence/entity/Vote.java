@@ -31,8 +31,7 @@ public class Vote {
 	@ManyToOne(optional=true) // To be removed
 	private Poll poll;
 	
-	// @ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
-	@ManyToOne(optional=true) // To be removed
+	@ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
 	private UserProfile voter;
 	
 	@Temporal(TemporalType.DATE)

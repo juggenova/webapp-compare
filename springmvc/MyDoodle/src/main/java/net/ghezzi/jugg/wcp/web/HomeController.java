@@ -2,6 +2,7 @@ package net.ghezzi.jugg.wcp.web;
 
 import static net.yadaframework.components.YadaUtil.messageSource;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
 import net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum;
@@ -42,22 +44,45 @@ public class HomeController {
 	private @Autowired VoteDao voteDao;
 	private @Autowired UserProfileDao userProfileDao;
 	
+	private String getCookieValue(HttpServletRequest request, String cookieName) {
+	    Cookie[] cookies = request.getCookies();
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if (cookieName.equals(cookie.getName())) {
+	                return cookie.getValue();
+	            }
+	        }
+	    }
+	    return null;
+	}
+	
+	private List<Vote> createAllVotes(UserProfile currentUser) {
+		List<Vote> result = new ArrayList<>();
+		Calendar calendar = Calendar.getInstance();
+		for (int i = 0; i < 7; i++) {
+			Vote vote = new Vote();
+			calendar.set(2024, Calendar.NOVEMBER, i+1, 0, 0, 0);
+			vote.setDay(calendar.getTime());
+			vote.setVoter(currentUser);
+			vote.setChoice(ChoiceEnum.NO);
+			vote = voteDao.save(vote);
+			result.add(vote);
+		}
+		return result;
+	}
 	
 	@RequestMapping("/castVote")
-	public String castVote(Integer index, ChoiceEnum voted, Model model) {
-		List<Vote> sortedVotes = voteDao.findVotes(null, null);
-		Vote toChange = null;
-		if (index>=sortedVotes.size()) {
-			toChange = new Vote();
-			Calendar calendar = Calendar.getInstance();
-			calendar.set(2024, Calendar.NOVEMBER, index+1, 0, 0, 0);
-			toChange.setDay(calendar.getTime());
-		} else {
-			toChange = sortedVotes.get(index);
+	public String castVote(String uuid, Integer index, ChoiceEnum voted, Model model) {
+		UserProfile currentUser = userProfileDao.ensureUser(uuid);
+		List<Vote> sortedVotes = voteDao.findVotes(currentUser, null);
+		// Al primo voto inizializzo tutti i voti al default
+		if (sortedVotes.isEmpty()) {
+			sortedVotes = createAllVotes(currentUser);
 		}
+		Vote toChange = sortedVotes.get(index);
 		toChange.setChoice(voted);
 		toChange = voteDao.save(toChange);
-		return goHome(model);
+		return goHome(currentUser, model);
 	}
 
 	/**
@@ -74,8 +99,8 @@ public class HomeController {
 		return "/home";
 	}
 	
-	private String goHome(Model model) {
-		insertPollData(model);
+	private String goHome(UserProfile currentUser, Model model) {
+		insertPollData(currentUser, model);
 		return "/home";
 	}
 
@@ -88,7 +113,13 @@ public class HomeController {
 			|| YadaLocalePathChangeInterceptor.localePathRequested(request) 
 			|| yadaWebUtil.isErrorPage(request)
 			|| model.containsAttribute("login")) {
-			return goHome(model);
+			// Fetch the user if any, based on the uuid cookie
+			UserProfile currentUser = null;
+			String uuid = getCookieValue(request, "uuid");
+			if (uuid!=null) {
+				currentUser = userProfileDao.ensureUser(uuid);
+			}
+			return goHome(currentUser, model);
 		}
 		// The locale is missing so set it explicitly with a redirect. 
 		// The "locale" variable has already been normalized by YadaWebConfig.localeResolver()
@@ -100,9 +131,8 @@ public class HomeController {
 	 * Aggiunge al model i voti eventualmente già dati
 	 * @param model
 	 */
-	private void insertPollData(Model model) {
+	private void insertPollData(UserProfile currentUser, Model model) {
 		Poll poll = null;
-		UserProfile currentUser = null;
 		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
 		/* Parte dinamica per ora rimossa
 		Poll poll = pollDao.findDefault(); // Per ora c'è solo un Poll cablato
@@ -111,6 +141,9 @@ public class HomeController {
 		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
 		model.addAttribute("poll", poll);
 		*/
+		if (currentUser!=null) {
+			model.addAttribute("uuid", currentUser.getUuid());
+		}
 		model.addAttribute("sortedVotes", sortedVotes);
 	}
 

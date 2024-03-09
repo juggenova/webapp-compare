@@ -17,7 +17,7 @@ public class UserProfile extends YadaUserProfile {
 	private static final long serialVersionUID = 1L;
 
 	@Column(length = 32)
-	String nickname; // This is an example of UserProfile customization
+	String uuid; // browser-generated id
 
 	/**
 	 * Used by DataTables
@@ -39,7 +39,7 @@ public class UserProfile extends YadaUserProfile {
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		result.append(nickname).append("(");
+		result.append(uuid).append("(");
 		result.append(id).append(")");
 		return result.toString();
 	}
@@ -69,13 +69,13 @@ public class UserProfile extends YadaUserProfile {
 	public Date getLoginDate() {
 		return userCredentials.getLastSuccessfulLogin();
 	}
-	
-	public String getNickname() {
-		return nickname;
+
+	public String getUuid() {
+		return uuid;
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 }

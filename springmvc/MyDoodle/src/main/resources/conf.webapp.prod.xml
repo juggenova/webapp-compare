@@ -91,7 +91,6 @@
 	<setup>
 		<users>
 			<user>
-				<nickname>admin</nickname> <!-- This is an example of UserProfile customization -->
 				<email>admin@EXAMPLE.com</email>
 				<password>myAppPassword</password>
 				<locale>en_US</locale>

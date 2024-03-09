@@ -11,9 +11,12 @@
 		NO=${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).NO},
 		MAYBE=${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).MAYBE}">
 		
+		<h2>User <span id="userTitle" th:text="${uuid}">42564356456</span></h2>
+		
 		<th:block th:with="dayIndex=0,dayName='Venerdì'">
 			<form th:action="@{/castVote}" class="choiceForm yadaAjax" th:fragment="voteFragment(dayIndex,dayName)">
 				<input type="hidden" name="index" th:value="${dayIndex}">
+				<input type="hidden" name="uuid" th:value="${uuid}">
 				<fieldset th:with="choice=${sortedVotes.size()>dayIndex?sortedVotes[dayIndex].choice:NO}">
 					<legend>[[|${dayName} ${dayIndex+1}|]]</legend>
 					<label><input type="radio" name="voted" value="YES" th:checked="${choice==YES}"> Yes</label>
@@ -32,8 +35,16 @@
 
 	</div>
 	
-	<script>
+	<script th:inline="javascript">
+		var userUuid = /*[[${uuid}]]*/ null;
 		wcp.ready(function(){
+			if (!userUuid) {
+				userUuid = wcp.getOrCreateUUID();
+				$("form.choiceForm input[name=uuid]").val(userUuid);
+				$("#userTitle").text(userUuid);
+			}
+			
+			// Submit on radio change
 			$("form.choiceForm input").change(function() {
 				$(this).closest("form").submit();
 			});
