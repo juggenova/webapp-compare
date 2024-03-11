@@ -4,17 +4,18 @@ import static net.yadaframework.components.YadaUtil.messageSource;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
 import net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum;
@@ -44,19 +45,39 @@ public class HomeController {
 	private @Autowired VoteDao voteDao;
 	private @Autowired UserProfileDao userProfileDao;
 	
-	private String getCookieValue(HttpServletRequest request, String cookieName) {
-	    Cookie[] cookies = request.getCookies();
-	    if (cookies != null) {
-	        for (Cookie cookie : cookies) {
-	            if (cookieName.equals(cookie.getName())) {
-	                return cookie.getValue();
-	            }
-	        }
-	    }
-	    return null;
+	@RequestMapping("/closePoll")
+	public String closePollWeb(Long id, Model model, Locale locale) {
+		Poll poll = pollDao.find(id);
+		closePoll(poll);
+		return yadaWebUtil.redirectString("/", locale);
+	}
+	
+	private void closePoll(Poll poll) {
+		try {
+			Date winner = pollDao.getPollResult(poll);
+			poll.setChosenDay(winner);
+			pollDao.save(poll);
+			log.debug("Poll {} closed now", poll);
+		} catch (Exception e) {
+			log.error("Can't close poll {}", poll, e);
+		}
+	}
+	
+	@Scheduled(cron = "0 59 23 * * ?")
+	private void checkDeadlines() {
+		log.debug("Checking deadlines...");
+		Poll defaultPoll = pollDao.findDefault();
+		if (defaultPoll.getChosenDay()==null) {
+			Date deadline = defaultPoll.getDeadline();
+			Date now = new Date();
+			if (!deadline.after(now)) {
+				closePoll(defaultPoll);
+			}
+		}
 	}
 	
 	private List<Vote> createAllVotes(UserProfile currentUser) {
+		Poll defaultPoll = pollDao.findDefault();
 		List<Vote> result = new ArrayList<>();
 		Calendar calendar = Calendar.getInstance();
 		for (int i = 0; i < 7; i++) {
@@ -65,6 +86,7 @@ public class HomeController {
 			vote.setDay(calendar.getTime());
 			vote.setVoter(currentUser);
 			vote.setChoice(ChoiceEnum.NO);
+			vote.setPoll(defaultPoll);
 			vote = voteDao.save(vote);
 			result.add(vote);
 		}
@@ -74,7 +96,8 @@ public class HomeController {
 	@RequestMapping("/castVote")
 	public String castVote(String uuid, Integer index, ChoiceEnum voted, Model model) {
 		UserProfile currentUser = userProfileDao.ensureUser(uuid);
-		List<Vote> sortedVotes = voteDao.findVotes(currentUser, null);
+		Poll defaultPoll = pollDao.findDefault();
+		List<Vote> sortedVotes = voteDao.findVotes(currentUser, defaultPoll);
 		// Al primo voto inizializzo tutti i voti al default
 		if (sortedVotes.isEmpty()) {
 			sortedVotes = createAllVotes(currentUser);
@@ -83,20 +106,6 @@ public class HomeController {
 		toChange.setChoice(voted);
 		toChange = voteDao.save(toChange);
 		return goHome(currentUser, model);
-	}
-
-	/**
-	 * Called after session timeout
-	 * @param model
-	 * @param locale
-	 * @return
-	 */
-	@RequestMapping("/timeout")
-	public String timeout(Model model, Locale locale) {
-		String title = messageSource.getMessage("session.expired.title", null, "Session Expired", locale);
-		String text = messageSource.getMessage("session.expired.message", null, "Session expired for inactivity, please login again", locale);
-		yadaNotify.title(title, model).message(text).info().redirectOnClose("/").add();
-		return "/home";
 	}
 	
 	private String goHome(UserProfile currentUser, Model model) {
@@ -115,7 +124,7 @@ public class HomeController {
 			|| model.containsAttribute("login")) {
 			// Fetch the user if any, based on the uuid cookie
 			UserProfile currentUser = null;
-			String uuid = getCookieValue(request, "uuid");
+			String uuid = yadaWebUtil.getCookieValue(request, "uuid");
 			if (uuid!=null) {
 				currentUser = userProfileDao.ensureUser(uuid);
 			}
@@ -132,24 +141,39 @@ public class HomeController {
 	 * @param model
 	 */
 	private void insertPollData(UserProfile currentUser, Model model) {
-		Poll poll = null;
-		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
-		/* Parte dinamica per ora rimossa
-		Poll poll = pollDao.findDefault(); // Per ora c'è solo un Poll cablato
-		// Per ora uso l'utente di default
-		UserProfile currentUser = userProfileDao.findUserProfileByUsername("admin@ghezzi.net");
-		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
-		model.addAttribute("poll", poll);
-		*/
-		if (currentUser!=null) {
-			model.addAttribute("uuid", currentUser.getUuid());
+		Poll poll = pollDao.findDefault();
+		if (!poll.isClosed()) {
+			List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
+			if (currentUser!=null) {
+				model.addAttribute("uuid", currentUser.getUuid());
+			}
+			model.addAttribute("sortedVotes", sortedVotes);
 		}
-		model.addAttribute("sortedVotes", sortedVotes);
+		model.addAttribute("poll", poll);
 	}
 
 	//////////////////////////////////////////////////////////////////////
 	// I metodi che seguono sono stati autogenerati e serviranno in futuro
 	//////////////////////////////////////////////////////////////////////
+
+	@RequestMapping("/errorPage")
+	public String errorPage(Model model, Locale locale) {
+		return "/errorPage";
+	}
+
+	/**
+	 * Called after session timeout
+	 * @param model
+	 * @param locale
+	 * @return
+	 */
+	@RequestMapping("/timeout")
+	public String timeout(Model model, Locale locale) {
+		String title = messageSource.getMessage("session.expired.title", null, "Session Expired", locale);
+		String text = messageSource.getMessage("session.expired.message", null, "Session expired for inactivity, please login again", locale);
+		yadaNotify.title(title, model).message(text).info().redirectOnClose("/").add();
+		return "/home";
+	}
 
 	/**
 	 * This method should be called when the user clicks on a login link explicitly

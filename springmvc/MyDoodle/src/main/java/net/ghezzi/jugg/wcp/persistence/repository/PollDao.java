@@ -1,6 +1,6 @@
 package net.ghezzi.jugg.wcp.persistence.repository;
 
-import java.util.List;
+import java.util.Date;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,25 @@ import net.ghezzi.jugg.wcp.persistence.entity.Poll;
 public class PollDao {
 
 	@PersistenceContext EntityManager em;
-
+	
+	public Date getPollResult(Poll poll) {
+		String sql = "SELECT day, " +
+		"SUM(CASE choice " +
+		"	WHEN 0 THEN 0 " +
+		"	WHEN 2 THEN 1 " +
+		"	WHEN 1 THEN 2 " +
+		"	ELSE 0 END) AS score " +
+		"FROM Vote " +
+		"where poll_id = :pollId " +
+		"GROUP BY day " +
+		"order by score desc, day";
+		Object result = em.createNativeQuery(sql)
+			.setMaxResults(1)
+			.setParameter("pollId", poll.getId())
+			.getSingleResult();
+		return (Date) ((Object[]) result)[0];
+	}
+	
 	/**
 	 * Cerca il Poll di default che è stato "cablato"
 	 */

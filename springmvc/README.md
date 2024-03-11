@@ -73,6 +73,20 @@ Adesso ogni voto è associato a un utente per cui in teoria la webapp è multiut
 
 ![Screenshot](/springmvc/readme.files/fase4.jpg)
 
+## Fase 4: chiusura del poll (1:38)
+*Requisiti 5+6*
+
+Visto che il requisito 6 prevede che l'utente veda il giorno scelto quando si collega dopo la deadline, dovendo memorizzare la scelta da qualche parte ho optato per l'utilizzo dell'oggetto Poll che avevo già creato. L'ho quindi introdotto nel flusso, creando un poll di default e assegnandolo a ogni voto. 
+
+Il controllo della deadline è gestito da Spring con una semplice annotation:
+```
+@Scheduled(cron = "0 59 23 * * ?")
+```
+Ogni notte viene eseguito il metodo che controlla se il poll è terminato e calcola il risultato, assegnandolo al poll stesso. Per comodità ho aggiunto un link in pagina che fa la stessa cosa, da usare per i test.
+
+![Screenshot](/springmvc/readme.files/fase5.jpg)
+
+
 
 
 

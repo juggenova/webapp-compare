@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
 
 /**
@@ -40,6 +41,14 @@ public class Poll {
 	@Temporal(TemporalType.DATE)
 	private Date endDay;
 
+	@Temporal(TemporalType.DATE)
+	private Date chosenDay;
+	
+	@Transient
+	public boolean isClosed() {
+		return chosenDay!=null;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
@@ -86,6 +95,18 @@ public class Poll {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Date getChosenDay() {
+		return chosenDay;
+	}
+
+	public void setChosenDay(Date chosenDay) {
+		this.chosenDay = chosenDay;
+	}
+	
+	public String toString() {
+		return title + "(" + id + ")";
 	}
 	
 }

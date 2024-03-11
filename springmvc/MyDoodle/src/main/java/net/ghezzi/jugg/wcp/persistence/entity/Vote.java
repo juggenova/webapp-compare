@@ -27,8 +27,7 @@ public class Vote {
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	protected Long id;
 	
-	// @ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
-	@ManyToOne(optional=true) // To be removed
+	@ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
 	private Poll poll;
 	
 	@ManyToOne(optional=false) // Decido di non mappare la inverse da Poll a Vote
