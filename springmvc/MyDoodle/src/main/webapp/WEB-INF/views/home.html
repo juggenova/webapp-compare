@@ -16,27 +16,16 @@
 	 	<p>Spring MVC Version</p>
 	    <p>Author: Cristian Ghezzi</p>
 	</div>
-	<div class="pollAttributes">
-		<div>Titolo</div><div>Prossima riunione JUG</div>
-		<div>Descrizione</div><div>L'argomento dell'incontro sarà "JavaOne" in cui i veterani, tra
-		una birretta e una grappetta, ricorderanno i bei tempi andati.</div>
-		<div>Deadline</div><div>20 Ottobre 2024 <a th:unless="${poll.closed}" th:href="@{/closePoll(id=${poll.id})}">Termina adesso</a></div>
+	
+	<div class="card" th:unless="${@userSession.loggedIn}">
+		<div class="card-body">
+			<div th:replace="~{/modalLogin :: #loginForm}">Login form here</div>
+		</div>
 	</div>
 	
-	<th:block th:if="${poll.closed}">
-		<p>Le votazioni sono chiuse!</p>
-		<p>Giorno scelto: [[${poll.chosenDay}]]</p>
-	</th:block>
-	<th:block th:unless="${poll.closed}">
-		<div th:replace="~{/choices :: body}"></div>
-	</th:block>
 </main>
 
 <th:block th:replace="~{/footer :: body}"/>
-
-<th:block th:if="${login}!=null">
-	<div th:replace="/modalLogin :: #loginModal"></div>
-</th:block>
 
 <script type="text/javascript" th:inline="javascript">
 	//<![CDATA[

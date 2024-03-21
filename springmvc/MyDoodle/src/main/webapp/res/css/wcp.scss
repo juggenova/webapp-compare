@@ -32,3 +32,13 @@ h1+div {
 		padding-right: 10px;
 	}
 }
+
+.card:has(#loginForm) {
+	max-width: 500px;
+    margin: 100px auto;
+}
+#loginForm {
+	button[data-bs-dismiss="modal"] {
+		display: none;
+	} 
+}

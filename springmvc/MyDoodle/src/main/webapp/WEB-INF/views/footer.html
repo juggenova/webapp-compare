@@ -3,6 +3,13 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:yada="http://www.yadaframework.net">
 <body>
 	<footer>
+		<hr>
+		<div class="container">
+			<div th:if="${@userSession.loggedIn}">
+				<p>Utente [[${@userSession.currentUsername}]]</p>
+				<a th:href="@{/logout}">Logout</a>
+			</div>
+		</div>
 	</footer>
 	
     <script th:src="@{/static/jquery-3.7.1.min.js}" ></script>

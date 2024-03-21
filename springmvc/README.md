@@ -71,7 +71,7 @@ Ho poi fatto una piccola modifica al model, rigenerato lo schema, e creato un nu
 
 Adesso ogni voto è associato a un utente per cui in teoria la webapp è multiutente, sempre con la limitazione che non c'è ancora il login e per entrare con un nuovo utente bisogna cancellare il cookie.
 
-![Screenshot](/springmvc/readme.files/fase4.jpg)
+![Screenshot](/springmvc/readme.files/fase3.jpg)
 
 ## Fase 4: chiusura del poll (1:38)
 *Requisiti 5+6*
@@ -84,9 +84,14 @@ Il controllo della deadline è gestito da Spring con una semplice annotation:
 ```
 Ogni notte viene eseguito il metodo che controlla se il poll è terminato e calcola il risultato, assegnandolo al poll stesso. Per comodità ho aggiunto un link in pagina che fa la stessa cosa, da usare per i test.
 
+![Screenshot](/springmvc/readme.files/fase4.jpg)
+
+## Fase 5: login (1:51)
+*Requisito 7*
+
+Ho inserito gli utenti cablati "user1", "user2"... "user5" aggiungendoli al file di configurazione `conf.webapp.dev.xml` in modo che vengano creati all'avvio del server. Ho poi deciso di spostare le pagine protette da login sotto "/user" e questo ha comportato un po' di refactoring, spostando il codice sia HTML che Java, anche per una questione di ordine.
+La home è diventata un form di login. Il post è gestito da Spring Security e fa atterrare sulla pagina del poll. Gli errori di login sono mostrati sul form.
+Tutto il codice per creare gli utenti random è stato rimosso.
+
 ![Screenshot](/springmvc/readme.files/fase5.jpg)
-
-
-
-
 

@@ -33,7 +33,7 @@ public class SecurityConfig extends YadaSecurityConfig {
         		);
 
         super.configure(http);
-
+        super.successHandler.setDefaultTargetUrlNormalRequest("/user/poll");
         // anyRequest().permitAll() mapping must be the last one
         http.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
         return http.build();

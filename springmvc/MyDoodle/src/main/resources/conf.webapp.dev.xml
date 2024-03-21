@@ -85,6 +85,41 @@
 				<role>USER</role>
 				<role>ADMIN</role>
 			</user>
+			<user>
+				<email>user1@ghezzi.net</email>
+				<password>user1</password>
+				<locale>it_IT</locale>
+				<timezone>Europe/Rome</timezone>
+				<role>USER</role>
+			</user>
+			<user>
+				<email>user2@ghezzi.net</email>
+				<password>user2</password>
+				<locale>it_IT</locale>
+				<timezone>Europe/Rome</timezone>
+				<role>USER</role>
+			</user>
+			<user>
+				<email>user3@ghezzi.net</email>
+				<password>user3</password>
+				<locale>it_IT</locale>
+				<timezone>Europe/Rome</timezone>
+				<role>USER</role>
+			</user>
+			<user>
+				<email>user4@ghezzi.net</email>
+				<password>user4</password>
+				<locale>it_IT</locale>
+				<timezone>Europe/Rome</timezone>
+				<role>USER</role>
+			</user>
+			<user>
+				<email>user5@ghezzi.net</email>
+				<password>user5</password>
+				<locale>it_IT</locale>
+				<timezone>Europe/Rome</timezone>
+				<role>USER</role>
+			</user>
 		</users>
 	</setup>
 	
