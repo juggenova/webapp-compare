@@ -95,3 +95,10 @@ Tutto il codice per creare gli utenti random è stato rimosso.
 
 ![Screenshot](/springmvc/readme.files/fase5.jpg)
 
+## Fase 6: invio email (0:46)
+*Requisito 8*
+
+Quando il poll viene chiuso, invia un'email di notifica a tutti gli utenti che hanno espresso il loro voto. Le credenziali del mail server sono nel file locale `/srv/wcpdev/bin/security.properties`. Alcune informazioni tecniche si possono trovare nella documentazione di [Yada Framework](https://yadaframework.net/en/emails.html).
+
+![Screenshot](/springmvc/readme.files/fase6.jpg)
+
