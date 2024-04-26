@@ -7,6 +7,13 @@
 	// For a public property or function, use "wcp.xxx = ..."
 	// For a private property use "var xxx = "
 	// For a private function use "function xxx(..."
+	
+	wcp.enableLanguageMenu = function() {
+		$("#langmenu").change(function() {
+        	var locale = $(this).val();
+        	yada.changeLanguagePathVariable(locale);
+    	});
+	}
 
 	wcp.getOrCreateUUID = function() {
 	  // Try to retrieve the UUID from a cookie

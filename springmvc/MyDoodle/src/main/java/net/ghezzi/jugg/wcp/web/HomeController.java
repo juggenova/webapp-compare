@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -67,6 +68,13 @@ public class HomeController {
 		for (UserProfile userProfile : voters) {
 			wcpEmailService.notifyPollClosed(defaultPoll, userProfile.getEmail(), userProfile.getLocale());
 		}
+	}
+	
+	
+	@GetMapping("/loginPost")
+	public String invalidLoginGet(Locale locale) {
+		// Login with GET will redirect to home
+		return yadaWebUtil.redirectString("/", locale);
 	}
 
 	public String goHome(Model model) {

@@ -130,4 +130,9 @@
 			</role>
 		</roles>
 	</security>
+	
+	<i18n localePathVariable="true">
+      <locale default="true">it</locale>
+      <locale>en</locale>
+   	</i18n>	
 </config>
