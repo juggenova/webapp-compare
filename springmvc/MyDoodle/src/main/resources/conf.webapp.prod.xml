@@ -31,17 +31,12 @@
 	<email>
 		<enabled>true</enabled>
 		<from>
-			<address>noreply@EXAMPLE.com</address>
-			<name>EXAMPLE SENDER</name>
+			<address>webapp-compare@ghezzi.net</address>
+			<name>Webapp Compare</name>
 		</from>
-		
-		<support>
-			<!-- Addresses to which a support request is sent -->
-			<to>admin@EXAMPLE.com</to>
-		</support>
 		<logoImage>template/email/logo50.png</logoImage>
 		<smtpserver>
-			<host>smtp.EXAMPLE.com</host>
+			<host>email-smtp.eu-central-1.amazonaws.com</host>
 			<port>587</port>
 			<protocol>smtp</protocol>
 			<username>${smtpserver_username}</username>
@@ -51,8 +46,9 @@
 			<properties>mail.smtp.auth=true</properties>
 			<properties>mail.smtp.starttls.enable=true</properties>
 			<properties>mail.smtp.quitwait=false</properties>
-			<!-- Set this option to your mail server if you trust it and don't care checking the certificate validity, e.g. it is on your localhost -->
-			<properties>mail.smtp.ssl.trust=smtp.EXAMPLE.com</properties>
+			<!-- Set this option to your mail server if you trust it and don't care checking the certificate validity, e.g. it is on your localhost 
+			<properties>mail.smtp.ssl.trust=email-smtp.eu-central-1.amazonaws.com</properties>
+			-->
 		</smtpserver>
 		<!-- Remove this list to enable email to everyone -->
 		<validEmail>EXAMPLE@EXAMPLE.com</validEmail>

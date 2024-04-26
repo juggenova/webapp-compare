@@ -24,15 +24,16 @@ public class PollUtil {
 	@Autowired private PollDao pollDao;
 	@Autowired private VoteDao voteDao;
 
-	public void closePoll(Poll poll) {
+	public Poll closePoll(Poll poll) {
 		try {
 			Date winner = pollDao.getPollResult(poll);
 			poll.setChosenDay(winner);
-			pollDao.save(poll);
+			poll = pollDao.save(poll);
 			log.debug("Poll {} closed now", poll);
 		} catch (Exception e) {
 			log.error("Can't close poll {}", poll, e);
 		}
+		return poll;
 	}
 
 	public List<Vote> createAllVotes(UserProfile currentUser) {

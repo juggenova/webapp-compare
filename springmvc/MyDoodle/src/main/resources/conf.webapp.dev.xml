@@ -30,7 +30,7 @@
 	<email>
 		<enabled>true</enabled>
 		<from>
-			<address>webappCompare@ghezzi.net</address>
+			<address>webapp-compare@ghezzi.net</address>
 			<name>Webapp Compare</name>
 		</from>
 		
@@ -41,6 +41,11 @@
 		<validEmail>test2@ghezzi.net</validEmail>
 		<validEmail>test3@ghezzi.net</validEmail>
 		<validEmail>test4@ghezzi.net</validEmail>
+		<validEmail>user1@ghezzi.net</validEmail>
+		<validEmail>user2@ghezzi.net</validEmail>
+		<validEmail>user3@ghezzi.net</validEmail>
+		<validEmail>user4@ghezzi.net</validEmail>
+		<validEmail>user5@ghezzi.net</validEmail>
 	</email>
 
 	<database enabled="true">

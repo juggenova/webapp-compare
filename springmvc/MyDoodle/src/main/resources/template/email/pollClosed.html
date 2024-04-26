@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+		<meta charset="UTF-8"/>
+    </head>
+    <body>
+ 	    <h1>Poll closed</h1>
+ 	    <p>Ricevi questa mail perché hai votato nel poll intitolato "[[${poll.title}]]"</p>
+ 	    <p>Il giorno scelto per l'incontro è</p>
+ 	    <p th:text="${poll.chosenDay}">[[Lunedì 4 novembre 2024]]</p>
+ 	    <br>
+ 	    <p>Alla prossima!</p>
+     	<br>
+     	<!--/*  
+     	<p>
+        	<img th:src="'cid:logosmall'" />
+     	</p>
+	  	<p style="margin-top: 10px;">Thank you, <br />
+	     	<a href="http://www.example.com/"><em>EXAMPLESITE</em></a>
+	  	</p>
+     	*/-->
+    </body>
+</html>

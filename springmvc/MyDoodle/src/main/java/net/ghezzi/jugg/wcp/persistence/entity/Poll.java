@@ -31,6 +31,9 @@ public class Poll {
 	@Column(length = 256)
 	private String description;
 	
+	/**
+	 * Giorno entro il quale gli utenti devono esprimere una preferenza
+	 */
 	@Column(columnDefinition="TIMESTAMP NULL")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deadline;
@@ -41,6 +44,9 @@ public class Poll {
 	@Temporal(TemporalType.DATE)
 	private Date endDay;
 
+	/**
+	 * Giorno scelto dall'algoritmo in base alle preferenze espresse dagli utenti
+	 */
 	@Temporal(TemporalType.DATE)
 	private Date chosenDay;
 	

@@ -1,4 +1,4 @@
-package net.ghezzi.jugg.wcp.web;
+package net.ghezzi.jugg.wcp.components;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

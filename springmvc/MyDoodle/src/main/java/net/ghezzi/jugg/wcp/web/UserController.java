@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import net.ghezzi.jugg.wcp.components.PollUtil;
+import net.ghezzi.jugg.wcp.components.UserSession;
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
 import net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
@@ -75,7 +76,8 @@ public class UserController {
 	@Deprecated // Temporaneo
 	public String closePollWeb(Long id, Model model, Locale locale) {
 		Poll poll = pollDao.find(id);
-		pollUtil.closePoll(poll);
+		poll = pollUtil.closePoll(poll);
+		homeController.sendEmails(poll);
 		return poll(model, locale);
 	}
 

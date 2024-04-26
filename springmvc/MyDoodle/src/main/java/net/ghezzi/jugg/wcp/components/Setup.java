@@ -2,28 +2,18 @@ package net.ghezzi.jugg.wcp.components;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import net.ghezzi.jugg.wcp.core.WcpConfiguration;
-import net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
 import net.ghezzi.jugg.wcp.persistence.entity.UserProfile;
-import net.ghezzi.jugg.wcp.persistence.entity.Vote;
 import net.ghezzi.jugg.wcp.persistence.repository.PollDao;
-import net.ghezzi.jugg.wcp.persistence.repository.UserProfileDao;
-import net.ghezzi.jugg.wcp.persistence.repository.VoteDao;
 import net.yadaframework.security.components.YadaUserSetup;
 
 @Component
 public class Setup extends YadaUserSetup<UserProfile> {
 	private @Autowired PollDao pollDao;
-	private @Autowired VoteDao voteDao;
-	private @Autowired UserProfileDao userProfileDao;
-	private @Autowired WcpConfiguration config;
 	
 	
 	 @Override

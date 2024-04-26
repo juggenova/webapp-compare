@@ -3,6 +3,7 @@ package net.ghezzi.jugg.wcp.web;
 import static net.yadaframework.components.YadaUtil.messageSource;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.ghezzi.jugg.wcp.components.PollUtil;
+import net.ghezzi.jugg.wcp.components.WcpEmailService;
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
+import net.ghezzi.jugg.wcp.persistence.entity.UserProfile;
 import net.ghezzi.jugg.wcp.persistence.repository.PollDao;
 import net.ghezzi.jugg.wcp.persistence.repository.UserProfileDao;
 import net.ghezzi.jugg.wcp.persistence.repository.VoteDao;
@@ -36,24 +39,36 @@ public class HomeController {
 	@Autowired private YadaNotify yadaNotify;
 	@Autowired private WcpConfiguration config;
 	@Autowired private PollUtil pollUtil;
-
 	@Autowired private PollDao pollDao;
 	@Autowired private VoteDao voteDao;
 	@Autowired private UserProfileDao userProfileDao;
+	@Autowired private WcpEmailService wcpEmailService;
 	
 	@Scheduled(cron = "0 59 23 * * ?")
 	private void checkDeadlines() {
 		log.debug("Checking deadlines...");
 		Poll defaultPoll = pollDao.findDefault();
-		if (defaultPoll.getChosenDay()==null) {
+		if (!defaultPoll.isClosed()) {
 			Date deadline = defaultPoll.getDeadline();
 			Date now = new Date();
 			if (!deadline.after(now)) {
-				pollUtil.closePoll(defaultPoll);
+				defaultPoll = pollUtil.closePoll(defaultPoll);
+				sendEmails(defaultPoll);
 			}
 		}
 	}
 	
+	/**
+	 * Send an email to all users that voted in the poll
+	 * @param defaultPoll
+	 */
+	public void sendEmails(Poll defaultPoll) {
+		List<UserProfile> voters = pollDao.findVoters(defaultPoll);
+		for (UserProfile userProfile : voters) {
+			wcpEmailService.notifyPollClosed(defaultPoll, userProfile.getEmail(), userProfile.getLocale());
+		}
+	}
+
 	public String goHome(Model model) {
 		return "/home";
 	}
