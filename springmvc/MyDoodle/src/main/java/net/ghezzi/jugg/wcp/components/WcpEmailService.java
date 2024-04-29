@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
+import net.yadaframework.components.YadaEmailBuilder;
 import net.yadaframework.components.YadaEmailService;
 
 @Service
@@ -19,19 +20,11 @@ public class WcpEmailService {
 	@Autowired private WcpConfiguration config;
 	
 	public void notifyPollClosed(Poll poll, String targetEmail, Locale locale) {
-		final String emailName = "pollClosed";
-		final String[] toEmail = new String[] { targetEmail };
-		final String[] replyEmail = config.getEmailFrom();
-
-		final Map<String, Object> templateParams = new HashMap<>();
-		templateParams.put("poll", poll);
-
-		String[] subjectParams = new String[] {poll.getTitle()};
-
-		Map<String, String> inlineResources = new HashMap<>();
-		// inlineResources.put("logosmall", config.getEmailLogoImage());
-
-		yadaEmailService.sendHtmlEmail(replyEmail, toEmail, replyEmail[0], emailName, subjectParams, templateParams, inlineResources, null, locale, false);
-		
+		YadaEmailBuilder.instance("pollClosed", locale, yadaEmailService)
+			.to(targetEmail)
+			.from(config.getEmailFrom())
+			.addModelAttribute("poll", poll)
+			.subjectParams(poll.getTitle())
+			.send();
 	}
 }
