@@ -102,9 +102,11 @@ Quando il poll viene chiuso, invia un'email di notifica a tutti gli utenti che h
 
 ![Screenshot](/springmvc/readme.files/fase6.jpg)
 
-## Fase 7: i18n + responsive (1:16)
+## Fase 7: i18n + responsive (1:22)
 *Requisito 9+10*
 
 Sia *i18n* che *responsive* erano sostanzialmente già implementati gratis: ho dovuto solo configurare i linguaggi in uso e implementare il menu di cambio lingua. La parte più laboriosa è stata sostituire i testi cablati in italiano con le chiavi di `message.properties`, cosa che in effetti si potrebbe evitare di fare esaustivamente in questo esercizio.
+
+PS: al commit precedente mi ero dimenticato la traduzione delle mail. In questo commit ho tradotto la mail di chiusura poll per mostrare come la lingua venga scelta in automatico.
 
 ![Screenshot](/springmvc/readme.files/fase7.jpg)
