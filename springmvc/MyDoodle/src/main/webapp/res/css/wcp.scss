@@ -1,9 +1,17 @@
+
+$c-error: red;
+
 html {
 	font-size: 16px;
 }
 
 body {
 	font-family: 'Ubuntu', sans-serif;
+}
+
+header {
+	padding: 5px 10px;
+	margin-bottom: 50px;
 }
 
 h1+div {
@@ -47,3 +55,21 @@ h1+div {
 	float: right;
     border: none;
 }
+
+.asdrg {
+	display: none; // Antispam field
+}
+
+.pwdMismatch {
+	visibility: hidden;
+}
+form.yada-password-mismatch {
+	.pwdMismatch {
+		visibility: visible;
+		color: $c-error;
+	}
+}
+.fieldError {
+	color: $c-error;
+}
+	

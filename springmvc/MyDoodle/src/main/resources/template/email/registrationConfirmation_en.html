@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+ 		<meta charset="UTF-8"/>
+    </head>
+    <body>
+ 	   <strong>Sign-up Confirmation</strong>
+    	<p>Dear user,<br/><br/> we received a sign-up request on our site for your email address.</p>
+    
+    	<p>Click on the link below to confirm registration:</p>
+    	<p><a th:text="${fullLink}" th:href="${fullLink}" href="#">Sign-up to MyDoodle</a></p>
+    
+     	<br>
+    	<p>If you didn't send the request, ignore and delete this email.</p>
+     	
+    </body>
+</html>

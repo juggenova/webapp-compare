@@ -110,3 +110,12 @@ Sia *i18n* che *responsive* erano sostanzialmente già implementati gratis: ho d
 PS: al commit precedente mi ero dimenticato la traduzione delle mail. In questo commit ho tradotto la mail di chiusura poll per mostrare come la lingua venga scelta in automatico.
 
 ![Screenshot](/springmvc/readme.files/fase7.jpg)
+
+## Fase 8: registrazione autonoma (1:10)
+*Requisito 11*
+
+Ho aggiunto una pagina di registrazione che invia un'email di conferma: cliccando sul link ricevuto, l'utente viene registrato.
+
+Non c'è nessuna funzionalità di cambio password o gestione profilo. Eventuali link presenti sono rotti (in attesa di implementazione).
+
+Non ho scritto tutte le traduzioni perché non è questo lo scopo.

@@ -11,15 +11,11 @@
 <th:block th:replace="~{/header :: body}"/>
 
 <main class="container">
-	<h1>Doodle Clone</h1>
-	<div>
-	 	<p>Spring MVC Version</p>
-	    <p>Author: Cristian Ghezzi</p>
-	</div>
 	
 	<div class="card" th:unless="${@userSession.loggedIn}">
 		<div class="card-body">
 			<div th:replace="~{/modalLogin :: #loginForm}">Login form here</div>
+			<a th:href="@{/registerPage}" th:text="#{register.link}">Create account</a>
 		</div>
 	</div>
 	

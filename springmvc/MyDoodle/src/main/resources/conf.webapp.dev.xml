@@ -29,12 +29,6 @@
 	-->
 	<email>
 		<enabled>true</enabled>
-		<from>
-			<address>webapp-compare@ghezzi.net</address>
-			<name>Webapp Compare</name>
-		</from>
-		
-		<logoImage>template/email/logo50.png</logoImage>
 		<!-- Remove this list to enable email to everyone -->
 		<validEmail>ghzcst@gmail.com</validEmail>
 		<validEmail>test1@ghezzi.net</validEmail>

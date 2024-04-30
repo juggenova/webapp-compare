@@ -34,7 +34,7 @@
 			<address>webapp-compare@ghezzi.net</address>
 			<name>Webapp Compare</name>
 		</from>
-		<logoImage>template/email/logo50.png</logoImage>
+		<!-- logoImage>template/email/logo50.png</logoImage -->
 		<smtpserver>
 			<host>email-smtp.eu-central-1.amazonaws.com</host>
 			<port>587</port>
