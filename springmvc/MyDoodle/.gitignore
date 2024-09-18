@@ -9,3 +9,4 @@
 /.sass/
 **/res/css/*.min.*
 **/res/js/*.min.*
+/tmp/

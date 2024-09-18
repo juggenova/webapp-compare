@@ -2,6 +2,8 @@ package net.ghezzi.jugg.wcp.persistence.entity;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,13 +36,16 @@ public class Poll {
 	/**
 	 * Giorno entro il quale gli utenti devono esprimere una preferenza
 	 */
+	@DateTimeFormat(pattern="yyyy-MM-dd'T'HH:mm")
 	@Column(columnDefinition="TIMESTAMP NULL")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date deadline;
 	
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date startDay;
 	
+	@DateTimeFormat(pattern="yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date endDay;
 

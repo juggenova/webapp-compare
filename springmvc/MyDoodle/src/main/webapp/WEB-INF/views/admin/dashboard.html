@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}"
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:yada="http://www.yadaframework.net">
+<head>
+	<title>Dashboard - Doodle Clone</title>
+	<th:block th:replace="~{/header :: headFragment}"/>
+</head>
+<body class="dashboard">
+
+<th:block th:replace="~{/header :: body}"/>
+
+<main class="container">
+	<h2>Dashboard</h2>
+	<a class="yadaAjax" th:href="@{/admin/ajaxAddEditPoll}">New Poll</a>
+</main>
+
+<th:block th:replace="~{/footer :: body}"/>
+
+
+</body>
+</html>

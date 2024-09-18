@@ -19,6 +19,10 @@ h1+div {
 	line-height: 0.4em;
 }
 
+main.container {
+	min-height: 200px;
+}
+
 .pollAttributes {
 	margin: 2em 0;
 	display: grid;

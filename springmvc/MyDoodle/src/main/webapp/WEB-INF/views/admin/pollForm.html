@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+	xmlns:yada="http://www.yadaframework.net"
+	>
+<body th:with="newPoll=${poll.id==null}, modalOptions=${ {databsbackdrop:'static'} }">
+
+<div th:replace="~{/yada/modalGenericB5::fragment(~{::title},_,~{::content},~{},_,'',~{})}" >
+
+<div th:fragment="title">
+	<span th:text="${newPoll?'New Poll':'Edit poll &quot;'+poll.title+'&quot;'}">Edit Poll XXX</span>
+</div>
+<div th:fragment="content">
+	<div class="modal-body">
+		<div th:replace="~{/yada/feedbackMessages :: div}"></div>
+		<form name="pollForm" yada:successhandler="if (wcp.pollTable != null) {wcp.pollTable.ajax.reload();}" 
+			th:action="@{/admin/ajaxAddOrUpdatePoll}" th:object="${poll}" class="yadaAjax" th:classappend="${#fields.hasErrors('*')}? has-error" method="post" role="form">
+			<fieldset>
+				<input type="hidden" name="pollId" th:value="*{id}" th:unless="${newPoll}">
+				<div th:unless="${newPoll}">ID: [[*{id}]]</div>
+				<div th:replace="~{/yada/form/b5/text :: body (fieldName='title',label='Title',type='text',maxlength=32,required=true)}"></div>
+				<div th:replace="~{/yada/form/b5/text :: body (fieldName='description',label='Description',type='text',maxlength=256,required=false)}"></div>
+				<div th:replace="~{/yada/form/b5/text :: body (fieldName='startDay',label='Start day',type='date',required=true)}"></div>
+				<div th:replace="~{/yada/form/b5/text :: body (fieldName='endDay',label='End day',type='date',required=true)}"></div>
+				<div th:replace="~{/yada/form/b5/text :: body (fieldName='deadline',label='Deadline for voting',type='datetime-local',required=true)}"></div>
+		
+				<div class="form-group">
+					<button class="btn btn-success" type="submit" name="Save"><span class="glyphicon glyphicon-ok"></span> Confirm</button>
+					<button class="btn btn-default" type="button" name="Cancel" data-bs-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+				</div>
+				</fieldset>
+		</form>
+		<br>
+		<div><sub>Nota: Timezone italiana</sub></div>
+	</div>
+</div>
+
+
+</div>
+
+</body>
+</html>
