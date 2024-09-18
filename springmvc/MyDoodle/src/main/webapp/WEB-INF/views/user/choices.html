@@ -16,6 +16,7 @@
 		
 		<th:block th:with="dayIndex=0,dayName=lang=='it'?'Venerdì':'Friday'">
 			<form th:action="@{/user/castVote}" class="choiceForm yadaAjax" th:fragment="voteFragment(dayIndex,dayName)">
+				<input type="hidden" name="pollId" th:value="${poll.id}">
 				<input type="hidden" name="index" th:value="${dayIndex}">
 				<fieldset th:with="choice=${sortedVotes.size()>dayIndex?sortedVotes[dayIndex].choice:NO}">
 					<legend>[[|${dayName} ${dayIndex+1}|]]</legend>

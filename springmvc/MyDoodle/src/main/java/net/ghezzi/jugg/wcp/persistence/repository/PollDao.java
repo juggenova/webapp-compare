@@ -47,11 +47,19 @@ public class PollDao {
 	}
 	
 	/**
-	 * Cerca il Poll di default che è stato "cablato"
+	 * Find all existing polls, in no specific sort order
 	 */
-	public Poll findDefault() {
-		return em.createQuery("SELECT e FROM Poll e", Poll.class).getSingleResult();
+	public List<Poll> findAll() {
+		return em.createQuery("SELECT p FROM Poll p", Poll.class).getResultList();
 	}
+	
+	// Il poll di default non esiste più
+//	/**
+//	 * Cerca il Poll di default che è stato "cablato"
+//	 */
+//	public Poll findDefault() {
+//		return em.createQuery("SELECT e FROM Poll e", Poll.class).getSingleResult();
+//	}
 
 	/**
 	 * Conta i poll nel database

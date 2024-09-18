@@ -13,10 +13,59 @@
 <main class="container">
 	<h2>Dashboard</h2>
 	<a class="yadaAjax" th:href="@{/admin/ajaxAddEditPoll}">New Poll</a>
+	
+	<div th:replace="~{/yada/dataTableCrud(tableId='pollTable',columns=${ {'ID','Title','startDay','endDay'} }, classes='yadaNoLoader')}"></div>
+	
 </main>
 
 <th:block th:replace="~{/footer :: body}"/>
 
+<script th:src="@{/static/datatables-1.13.4/datatables.min.js}"></script>
 
+<script th:inline="javascript">
+wcp.ready(function(){
+	let language = /*[[${#locale.language}]]*/ "placehoder";
+	let tablePageLoadUrl = /*[[@{/admin/pollTablePage}]]*/ "placehoder";
+	let pollEditUrl = /*[[@{/admin/ajaxAddOrUpdatePoll}]]*/ "placehoder";
+	let userDeleteUrl = /*[[@{/admin/ajaxDeletePoll}]]*/ "placehoder";
+	// Solo in italiano per ora
+	let languageFileUrl = /*[[@{|/static/datatables-1.13.4/i18n/it_it.json|}]]*/ "placehoder";
+	let deleteButtonTitle = "Elimina";
+	let deleteConfirmationMessage = "Vuoi eliminare il poll selezionato?";
+	let deleteConfirmationManyMessage = 'Vuoi eliminare i poll selezionati?';
+	let deleteConfirmationButton = "Elimina";
+	let deleteAbortButton = "Annulla";
+	
+	// Add the table to the wcp namespace so I can reload it later
+   	wcp.pollTable = yada.dataTableCrud($('#pollTable'), 
+   		tablePageLoadUrl, 
+   		['id',
+   		 'title',
+   		 'startDay',
+   		 'endDay'
+   		 ],
+   		{
+   			"url": pollEditUrl,
+   			"title": 'Edit',
+   			"idName": "pollId"
+   		},
+   		{
+		"url": userDeleteUrl,
+   			"title": deleteButtonTitle,
+   			"nameColumn": 2,
+   			"toolbarPosition": 2, // zero-based
+   			"confirmOneMessage": deleteConfirmationMessage,
+   			"confirmManyMessage": deleteConfirmationManyMessage,
+   			"confirmButtonText": deleteConfirmationButton,
+   			"abortButtonText": deleteAbortButton
+       	},
+   		[ [ 2, 'desc' ] ], 
+   		10,
+   		languageFileUrl
+    );
+	
+});
+
+</script>
 </body>
 </html>

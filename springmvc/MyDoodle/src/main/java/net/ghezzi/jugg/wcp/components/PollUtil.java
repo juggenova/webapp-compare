@@ -16,6 +16,8 @@ import net.ghezzi.jugg.wcp.persistence.entity.UserProfile;
 import net.ghezzi.jugg.wcp.persistence.entity.Vote;
 import net.ghezzi.jugg.wcp.persistence.repository.PollDao;
 import net.ghezzi.jugg.wcp.persistence.repository.VoteDao;
+import net.ghezzi.jugg.wcp.web.AdminController;
+import net.yadaframework.exceptions.YadaInvalidUsageException;
 
 @Component
 public class PollUtil {
@@ -36,19 +38,32 @@ public class PollUtil {
 		return poll;
 	}
 
-	public List<Vote> createAllVotes(UserProfile currentUser) {
-		Poll defaultPoll = pollDao.findDefault();
+	/**
+	 * Set the default vote on the poll for the current user
+	 * @param poll
+	 * @param currentUser
+	 * @return
+	 */
+	public List<Vote> createAllVotes(Poll poll, UserProfile currentUser) {
 		List<Vote> result = new ArrayList<>();
+		Date startDay = poll.getStartDay();
+		Date endDay = poll.getEndDay();
 		Calendar calendar = Calendar.getInstance();
-		for (int i = 0; i < 7; i++) {
+		calendar.setTime(startDay);
+		int loopPrevention = AdminController.MAX_DAYS*2;
+		while (calendar.getTime().before(endDay) || calendar.getTime().equals(endDay)) {
 			Vote vote = new Vote();
-			calendar.set(2024, Calendar.NOVEMBER, i+1, 0, 0, 0);
 			vote.setDay(calendar.getTime());
 			vote.setVoter(currentUser);
-			vote.setChoice(ChoiceEnum.NO);
-			vote.setPoll(defaultPoll);
+			vote.setChoice(ChoiceEnum.NO); // Default is NO
+			vote.setPoll(poll);
 			vote = voteDao.save(vote);
 			result.add(vote);
+			calendar.add(Calendar.DATE, 1); // Move to the next day
+			if (--loopPrevention<0) {
+				// Should never happen because the poll is validated at creation
+				throw new YadaInvalidUsageException("Too many days in the poll"); 
+			}
 		}
 		return result;
 	}

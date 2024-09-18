@@ -48,13 +48,15 @@ public class HomeController {
 	@Scheduled(cron = "0 59 23 * * ?")
 	private void checkDeadlines() {
 		log.debug("Checking deadlines...");
-		Poll defaultPoll = pollDao.findDefault();
-		if (!defaultPoll.isClosed()) {
-			Date deadline = defaultPoll.getDeadline();
-			Date now = new Date();
-			if (!deadline.after(now)) {
-				defaultPoll = pollUtil.closePoll(defaultPoll);
-				sendEmails(defaultPoll);
+		List<Poll> polls = pollDao.findAll();
+		for (Poll poll : polls) {
+			if (!poll.isClosed()) {
+				Date deadline = poll.getDeadline();
+				Date now = new Date();
+				if (!deadline.after(now)) {
+					poll = pollUtil.closePoll(poll);
+					sendEmails(poll);
+				}
 			}
 		}
 	}
@@ -69,7 +71,6 @@ public class HomeController {
 			wcpEmailService.notifyPollClosed(defaultPoll, userProfile.getEmail(), userProfile.getLocale());
 		}
 	}
-	
 	
 	@GetMapping("/loginPost")
 	public String invalidLoginGet(Locale locale) {

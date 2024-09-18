@@ -3,10 +3,13 @@ package net.ghezzi.jugg.wcp.web;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,12 +17,16 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
 import net.ghezzi.jugg.wcp.persistence.repository.PollDao;
 import net.yadaframework.components.YadaNotify;
 import net.yadaframework.components.YadaUtil;
+import net.yadaframework.persistence.YadaDataTableDao;
+import net.yadaframework.persistence.YadaSql;
+import net.yadaframework.web.YadaDatatablesRequest;
 
 @Controller
 @RequestMapping("/admin")
@@ -29,6 +36,9 @@ public class AdminController {
 	@Autowired private WcpConfiguration config;
 	@Autowired private PollDao pollDao;
 	@Autowired private YadaNotify yadaNotify;
+	@Autowired private YadaDataTableDao yadaDataTableDao;
+	
+	public final static int MAX_DAYS = 64; // Max interval a poll can cover
 	
 	@ModelAttribute("poll")
 	public Poll addPoll(@RequestParam(value="pollId", required=false) Long pollId, Model model) {
@@ -93,6 +103,12 @@ public class AdminController {
 			if (deadlineTime.after(endDayTime) || deadlineTime.before(startDay)) {
 				pollBinding.rejectValue("deadline", "poll.validation.deadlineinvalid");
 			}
+			// Check max interval
+			long diffInMillies = Math.abs(endDay.getTime() - startDay.getTime());
+			long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+			if (diffInDays > MAX_DAYS) {
+				pollBinding.rejectValue("endDay", "poll.validation.toomanydays", new Object[]{diffInDays, MAX_DAYS}, "Too many days");
+			}
 		}
 		if (pollBinding.hasErrors()) {
 			return ajaxAddEditPoll(poll, model, locale);
@@ -106,5 +122,11 @@ public class AdminController {
 		}
 	}
 	
+	@RequestMapping(value ="/pollTablePage", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody public Map<String, Object> pollTablePage(YadaDatatablesRequest yadaDatatablesRequest, Locale locale) {
+		YadaSql yadaSql = yadaDatatablesRequest.getYadaSql();
+		Map<String, Object> result = yadaDataTableDao.getConvertedJsonPage(yadaDatatablesRequest, Poll.class, locale);
+		return result;
+	}
 
 }

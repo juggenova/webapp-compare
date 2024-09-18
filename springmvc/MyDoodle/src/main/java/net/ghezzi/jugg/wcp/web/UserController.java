@@ -1,7 +1,9 @@
 package net.ghezzi.jugg.wcp.web;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +46,13 @@ public class UserController {
 	}
 	
 	@RequestMapping("/castVote")
-	public String castVote(Integer index, ChoiceEnum voted, Model model) {
+	public String castVote(Long pollId, Integer index, ChoiceEnum voted, Model model) {
 		UserProfile currentUser = userSession.getCurrentUserProfile();
-		Poll defaultPoll = pollDao.findDefault();
-		List<Vote> sortedVotes = voteDao.findVotes(currentUser, defaultPoll);
+		Poll poll = pollDao.find(pollId);
+		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
 		// Al primo voto inizializzo tutti i voti al default
 		if (sortedVotes.isEmpty()) {
-			sortedVotes = pollUtil.createAllVotes(currentUser);
+			sortedVotes = pollUtil.createAllVotes(poll, currentUser);
 		}
 		Vote toChange = sortedVotes.get(index);
 		toChange.setChoice(voted);
@@ -63,14 +65,17 @@ public class UserController {
 	 * @param model
 	 */
 	private void insertPollData(UserProfile currentUser, Model model) {
-		Poll poll = pollDao.findDefault();
-		if (!poll.isClosed()) {
-			List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
-			model.addAttribute("sortedVotes", sortedVotes);
+		List<Poll> polls = pollDao.findAll();
+		Map<Poll, List<Vote>> pollToVote = new HashMap<>();
+		for (Poll poll : polls) {
+			if (!poll.isClosed()) {
+				List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
+				pollToVote.put(poll, sortedVotes);
+			}
 		}
-		model.addAttribute("poll", poll);
+		model.addAttribute("polls", polls);
+		model.addAttribute("pollToVote", pollToVote);
 	}
-
 	
 	@RequestMapping("/closePoll")
 	@Deprecated // Temporaneo
