@@ -119,3 +119,18 @@ Ho aggiunto una pagina di registrazione che invia un'email di conferma: cliccand
 Non c'è nessuna funzionalità di cambio password o gestione profilo. Eventuali link presenti sono rotti (in attesa di implementazione).
 
 Non ho scritto tutte le traduzioni perché non è questo lo scopo.
+
+## Fase 9: gestione poll (5:22)
+*Requisito 12*
+
+Questa è stata la fase più lunga perché la possibilità di aggiungere dinamicamente i poll ha anche richiesto la modifica di varie parti del codice che presumevano l'esistenza di un solo poll cablato, oltre al fatto che erano mesi che non mettevo mano al codice e ho dovuto ingranare.
+
+Questa versione ha una pagina "dashboard" dove è possibile aggiungere nuovi poll, vedere i poll esistenti (solo i propri), modificarli e cancellarli. La pagina "home" mostra tutti i poll esistenti e consente di votarli o vedere il giorno più votato. La tabella dei poll è implementata con [DataTables](https://datatables.net/) sfruttando gli automatismi offerti da [Yada Framework](https://yadaframework.net/en/datatables.html) (attualmente non documentati).
+
+![Screenshot](/springmvc/readme.files/fase9.jpg)
+
+## Conclusioni
+La versione attuale dell'applicazione soddisfa tutti i requisiti richiesti ed è stata implementata in 18 ore e 55 minuti, quindi in meno di tre giornate di lavoro. Qualche ora sarebbe stata risparmiata procedendo direttamente alla realizzazione dei requisiti finali senza passare per le fasi intermedie, concepite per favorire la collaborazione. Certo molte cose possono essere migliorate, nuove funzionalità possono essere aggiunte, e sicuramente ci sono dei bug che non ho rilevato, ma ritengo lo scopo raggiunto.
+
+
+Spero che qualcuno colga lo spunto e provi a implementare qualche parte in maniera diversa, dando origine a un confronto, sicuramente istruttivo per tutti, che possa essere oggetto di una prossima riunione del [JUG Genova](https://juggenova.it/).
