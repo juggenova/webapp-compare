@@ -23,6 +23,7 @@ import net.ghezzi.jugg.wcp.persistence.repository.PollDao;
 import net.ghezzi.jugg.wcp.persistence.repository.UserProfileDao;
 import net.ghezzi.jugg.wcp.persistence.repository.VoteDao;
 import net.yadaframework.components.YadaWebUtil;
+import net.yadaframework.web.YadaViews;
 
 @Controller
 @RequestMapping("/user")
@@ -38,6 +39,12 @@ public class UserController {
 	@Autowired private UserSession userSession;
 	@Autowired private YadaWebUtil yadaWebUtil;
 
+	/**
+	 * Mostra tutti i poll
+	 * @param model
+	 * @param locale
+	 * @return
+	 */
 	@RequestMapping("/poll")
 	public String poll(Model model, Locale locale) {
 		UserProfile currentUser = userSession.getCurrentUserProfile();
@@ -45,19 +52,13 @@ public class UserController {
 		return "/user/poll";
 	}
 	
-	@RequestMapping("/castVote")
-	public String castVote(Long pollId, Integer index, ChoiceEnum voted, Model model) {
+	@RequestMapping("/castVote") // Ajax call
+	public String castVote(Long voteId, ChoiceEnum choice, Model model) {
 		UserProfile currentUser = userSession.getCurrentUserProfile();
-		Poll poll = pollDao.find(pollId);
-		List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
-		// Al primo voto inizializzo tutti i voti al default
-		if (sortedVotes.isEmpty()) {
-			sortedVotes = pollUtil.createAllVotes(poll, currentUser);
-		}
-		Vote toChange = sortedVotes.get(index);
-		toChange.setChoice(voted);
+		Vote toChange = voteDao.findForUser(currentUser, voteId);
+		toChange.setChoice(choice);
 		toChange = voteDao.save(toChange);
-		return homeController.goHome(model);
+		return YadaViews.AJAX_SUCCESS;
 	}
 
 	/**
@@ -70,6 +71,10 @@ public class UserController {
 		for (Poll poll : polls) {
 			if (!poll.isClosed()) {
 				List<Vote> sortedVotes = voteDao.findVotes(currentUser, poll);
+				if (sortedVotes.isEmpty()) {
+					// Inizializzo tutti i voti al default
+					sortedVotes = pollUtil.createAllVotes(poll, currentUser);
+				}
 				pollToVote.put(poll, sortedVotes);
 			}
 		}
@@ -78,11 +83,10 @@ public class UserController {
 	}
 	
 	@RequestMapping("/closePoll")
-	@Deprecated // Temporaneo
 	public String closePollWeb(Long id, Model model, Locale locale) {
-		Poll poll = pollDao.find(id);
+		UserProfile currentUser = userSession.getCurrentUserProfile();
+		Poll poll = pollDao.findForUser(currentUser, id);
 		poll = pollUtil.closePoll(poll);
-		homeController.sendEmails(poll);
 		return poll(model, locale);
 	}
 

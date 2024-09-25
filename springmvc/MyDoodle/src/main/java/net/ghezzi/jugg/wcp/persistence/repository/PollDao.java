@@ -10,6 +10,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
 import net.ghezzi.jugg.wcp.persistence.entity.UserProfile;
+import net.yadaframework.persistence.YadaSql;
 
 @Repository
 @Transactional(readOnly = true) 
@@ -70,6 +71,27 @@ public class PollDao {
 	}
 	
 	/**
+	 * Ritorna il Poll avente l'id specificato ma solo se appartiene allo userProfile
+	 * @param userProfile
+	 * @param pollId
+	 * @return Poll se trovato, oppure null se non trovato
+	 */
+	public Poll findForUser(UserProfile userProfile, Long pollId) {
+		YadaSql yadaSql = YadaSql.instance().selectFrom("select p from Poll p")
+				.join("join p.owner u")
+				.where("where u=:userProfile").and()
+				.where("where p.id=:pollId").and()
+				.setParameter("userProfile", userProfile)
+				.setParameter("pollId", pollId);
+		List<Poll> polls = yadaSql.query(em, Poll.class).getResultList();
+		if (polls.isEmpty()) {
+			return null;
+		}
+		return polls.get(0);
+	}
+	
+	
+	/**
 	 * Cerca un Poll
 	 * @param pollId id del poll
 	 * @return il poll trovato, oppure null
@@ -89,5 +111,23 @@ public class PollDao {
     		return entity;
     	}
     	return em.merge(entity);
-    }	
+    }
+
+	/**
+	 * Delete the poll and all votes
+	 * @param poll
+	 */
+	@Transactional(readOnly = false)
+	public boolean delete(Poll poll) {
+		if (poll!=null) {
+			em.createQuery("delete Vote v where v.poll=:poll")
+				.setParameter("poll", poll)
+				.executeUpdate();
+			em.createQuery("delete Poll p where p=:poll")
+				.setParameter("poll", poll)
+				.executeUpdate();
+			return true;
+		}
+		return false;
+	}	
 }

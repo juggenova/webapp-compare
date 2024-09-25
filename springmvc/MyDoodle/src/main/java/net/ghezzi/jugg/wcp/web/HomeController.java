@@ -41,9 +41,6 @@ public class HomeController {
 	@Autowired private WcpConfiguration config;
 	@Autowired private PollUtil pollUtil;
 	@Autowired private PollDao pollDao;
-	@Autowired private VoteDao voteDao;
-	@Autowired private UserProfileDao userProfileDao;
-	@Autowired private WcpEmailService wcpEmailService;
 	
 	@Scheduled(cron = "0 59 23 * * ?")
 	private void checkDeadlines() {
@@ -55,20 +52,8 @@ public class HomeController {
 				Date now = new Date();
 				if (!deadline.after(now)) {
 					poll = pollUtil.closePoll(poll);
-					sendEmails(poll);
 				}
 			}
-		}
-	}
-	
-	/**
-	 * Send an email to all users that voted in the poll
-	 * @param defaultPoll
-	 */
-	public void sendEmails(Poll defaultPoll) {
-		List<UserProfile> voters = pollDao.findVoters(defaultPoll);
-		for (UserProfile userProfile : voters) {
-			wcpEmailService.notifyPollClosed(defaultPoll, userProfile.getEmail(), userProfile.getLocale());
 		}
 	}
 	

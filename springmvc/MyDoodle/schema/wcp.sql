@@ -1,4 +1,4 @@
-create table Poll (chosenDay date, endDay date, startDay date, deadline TIMESTAMP NULL null, id bigint not null auto_increment, version bigint not null, title varchar(32), description varchar(256), primary key (id)) engine=InnoDB;
+create table Poll (chosenDay date, endDay date, startDay date, deadline TIMESTAMP NULL null, id bigint not null auto_increment, owner_id bigint, version bigint not null, title varchar(32), description varchar(256), primary key (id)) engine=InnoDB;
 create table Vote (choice tinyint check (choice between 0 and 2), day date, id bigint not null auto_increment, poll_id bigint not null, version bigint not null, voter_id bigint not null, primary key (id)) engine=InnoDB;
 create table WcpRegistrationRequest (id bigint not null, name varchar(255), surname varchar(255), primary key (id)) engine=InnoDB;
 create table YadaAttachedFile (height integer, heightDesktop integer, heightMobile integer, heightPdf integer, published bit not null, width integer, widthDesktop integer, widthMobile integer, widthPdf integer, id bigint not null auto_increment, modified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, sortOrder bigint not null, uploadTimestamp TIMESTAMP NULL null, version bigint not null, metadata varchar(1024), clientFilename varchar(255), filename varchar(255), filenameDesktop varchar(255), filenameMobile varchar(255), filenamePdf varchar(255), forLocale varchar(255), relativeFolderPath varchar(255), primary key (id)) engine=InnoDB;
@@ -20,6 +20,7 @@ alter table YadaSocialCredentials add constraint UK_1uppa4u7bksphbjwm4i2c8re9 un
 alter table YadaUserCredentials add constraint UK_6gbgs7fb7g5t4wo0ys7e5q31j unique (username);
 alter table YadaUserProfile add constraint UK_q1b54fx8m1fu9budmpt2tm80i unique (avatar_id);
 alter table YadaUserProfile add constraint UK_3bjn82k5gj41f9ocejoxx1uua unique (userCredentials_id);
+alter table Poll add constraint FK47dx1n0k3d9r1jpd8nl25q590 foreign key (owner_id) references YadaUserProfile (id);
 alter table Vote add constraint FK34cunlfwlpao9xym0oo0syoox foreign key (poll_id) references Poll (id);
 alter table Vote add constraint FKnxfr3qxj4kvlppeypu8tsuc0t foreign key (voter_id) references YadaUserProfile (id);
 alter table WcpRegistrationRequest add constraint FKnq43jk0lbgykrnch7otlskvxl foreign key (id) references YadaRegistrationRequest (id);

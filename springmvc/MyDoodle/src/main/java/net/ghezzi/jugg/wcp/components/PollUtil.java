@@ -25,17 +25,37 @@ public class PollUtil {
 	
 	@Autowired private PollDao pollDao;
 	@Autowired private VoteDao voteDao;
+	@Autowired private WcpEmailService wcpEmailService;
 
+	/**
+	 * Close the poll and send notification emails to voters
+	 * @param poll
+	 * @return
+	 */
 	public Poll closePoll(Poll poll) {
-		try {
-			Date winner = pollDao.getPollResult(poll);
-			poll.setChosenDay(winner);
-			poll = pollDao.save(poll);
-			log.debug("Poll {} closed now", poll);
-		} catch (Exception e) {
-			log.error("Can't close poll {}", poll, e);
+		if (poll!=null && !poll.isClosed()) {
+			try {
+				Date winner = pollDao.getPollResult(poll);
+				poll.setChosenDay(winner);
+				poll = pollDao.save(poll);
+				log.debug("Poll {} closed now", poll);
+			} catch (Exception e) {
+				log.error("Can't close poll {}", poll, e);
+			}
+			sendEmails(poll);
 		}
 		return poll;
+	}
+
+	/**
+	 * Send an email to all users that voted in the poll
+	 * @param defaultPoll
+	 */
+	public void sendEmails(Poll defaultPoll) {
+		List<UserProfile> voters = pollDao.findVoters(defaultPoll);
+		for (UserProfile userProfile : voters) {
+			wcpEmailService.notifyPollClosed(defaultPoll, userProfile.getEmail(), userProfile.getLocale());
+		}
 	}
 
 	/**

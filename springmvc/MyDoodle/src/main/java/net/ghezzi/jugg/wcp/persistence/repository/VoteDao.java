@@ -17,6 +17,26 @@ import net.yadaframework.persistence.YadaSql;
 public class VoteDao {
 
 	@PersistenceContext EntityManager em;
+	
+	/**
+	 * Ritorna il Vote avente l'id specificato ma solo se appartiene allo userProfile
+	 * @param userProfile
+	 * @param voteId
+	 * @return Vote se trovato, oppure null se non trovato
+	 */
+	public Vote findForUser(UserProfile userProfile, Long voteId) {
+		YadaSql yadaSql = YadaSql.instance().selectFrom("select v from Vote v")
+				.join("join v.voter u")
+				.where("where u=:userProfile").and()
+				.where("where v.id=:voteId").and()
+				.setParameter("userProfile", userProfile)
+				.setParameter("voteId", voteId);
+		List<Vote> votes = yadaSql.query(em, Vote.class).getResultList();
+		if (votes.isEmpty()) {
+			return null;
+		}
+		return votes.get(0);
+	}
 
 	/**
 	 * Ritorna la lista di voti per un poll di un dato user.

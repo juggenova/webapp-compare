@@ -12,11 +12,13 @@
 
 <main class="container">
 	<h2>Dashboard</h2>
-	<a class="yadaAjax" th:href="@{/admin/ajaxAddEditPoll}">New Poll</a>
+	<a class="yadaAjax" th:href="@{/admin/ajaxPollForm}">New Poll</a>
 	
 	<div th:replace="~{/yada/dataTableCrud(tableId='pollTable',columns=${ {'ID','Title','startDay','endDay'} }, classes='yadaNoLoader')}"></div>
 	
 </main>
+
+<div th:insert="/yada/modalConfirmB5 :: modalBlock" id="yada-confirm"></div>
 
 <th:block th:replace="~{/footer :: body}"/>
 
@@ -26,7 +28,7 @@
 wcp.ready(function(){
 	let language = /*[[${#locale.language}]]*/ "placehoder";
 	let tablePageLoadUrl = /*[[@{/admin/pollTablePage}]]*/ "placehoder";
-	let pollEditUrl = /*[[@{/admin/ajaxAddOrUpdatePoll}]]*/ "placehoder";
+	let pollEditUrl = /*[[@{/admin/ajaxPollForm}]]*/ "placehoder";
 	let userDeleteUrl = /*[[@{/admin/ajaxDeletePoll}]]*/ "placehoder";
 	// Solo in italiano per ora
 	let languageFileUrl = /*[[@{|/static/datatables-1.13.4/i18n/it_it.json|}]]*/ "placehoder";
@@ -50,9 +52,10 @@ wcp.ready(function(){
    			"idName": "pollId"
    		},
    		{
-		"url": userDeleteUrl,
+			"url": userDeleteUrl,
    			"title": deleteButtonTitle,
-   			"nameColumn": 2,
+   			"idName": "pollId",
+   			"nameColumn": 3,
    			"toolbarPosition": 2, // zero-based
    			"confirmOneMessage": deleteConfirmationMessage,
    			"confirmManyMessage": deleteConfirmationManyMessage,

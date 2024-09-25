@@ -7,45 +7,28 @@
 
 <body th:remove="tag">
 	<div th:with="
+		sortedVotes=${pollToVote.get(poll)},
+		startDay=${poll.startDay},
+		endDay=${poll.endDay},
 		lang=${#locale.language},
 		YES=${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).YES},
 		NO=${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).NO},
 		MAYBE=${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).MAYBE}">
 		
-		<h2><span th:text="#{label.user}">User</span> <span id="userTitle" th:text="${@userSession.currentUsername}">some@example.com</span></h2>
-		
-		<th:block th:with="dayIndex=0,dayName=lang=='it'?'Venerdì':'Friday'">
-			<form th:action="@{/user/castVote}" class="choiceForm yadaAjax" th:fragment="voteFragment(dayIndex,dayName)">
-				<input type="hidden" name="pollId" th:value="${poll.id}">
-				<input type="hidden" name="index" th:value="${dayIndex}">
-				<fieldset th:with="choice=${sortedVotes.size()>dayIndex?sortedVotes[dayIndex].choice:NO}">
-					<legend>[[|${dayName} ${dayIndex+1}|]]</legend>
-					<label> <input type="radio" name="voted" value="YES" th:checked="${choice==YES}"> [[#{label.choice.YES}]]</label>
-					<label> <input type="radio" name="voted" value="NO" th:checked="${choice==NO}"> [[#{label.choice.NO}]]</label>
-					<label> <input type="radio" name="voted" value="MAYBE" th:checked="${choice==MAYBE}"> [[#{label.choice.MAYBE}]]</label>
-				</fieldset>
+		<div th:each="vote, iterStat : ${sortedVotes}">
+			<form class="choiceForm">
+			    <fieldset>
+			        <legend th:text="${#dates.format(vote.day, 'EEEE d MMMM')}"></legend>
+			        <label th:each="choiceValue : ${T(net.ghezzi.jugg.wcp.persistence.entity.ChoiceEnum).getSortedValues()}">
+			        	<input type="radio" name="choice" yada:ajax="@{/user/castVote(voteId=${vote.id})}" yada:showAjaxFeedback
+			        		th:value="${choiceValue}" th:checked="${vote.choice==choiceValue}"> 
+			        	[[#{|label.choice.${choiceValue}|}]]
+			        </label>
+			    </fieldset>
 			</form>
-		</th:block>
-		
-		<div th:replace="~{::voteFragment(1,lang=='it'?'Sabato':'Saturday')}"></div>
-		<div th:replace="~{::voteFragment(2,lang=='it'?'Domenica':'Sunday')}"></div>
-		<div th:replace="~{::voteFragment(3,lang=='it'?'Lunedì':'Monday')}"></div>
-		<div th:replace="~{::voteFragment(4,lang=='it'?'Martedì':'Tuesday')}"></div>
-		<div th:replace="~{::voteFragment(5,lang=='it'?'Mercoledì':'Wednesday')}"></div>
-		<div th:replace="~{::voteFragment(6,lang=='it'?'Giovedì':'Thursday')}"></div>
-
+		</div>
 	</div>
 	
-	<script th:inline="javascript">
-		wcp.ready(function(){
-			// Submit on radio change
-			$("form.choiceForm input").change(function() {
-				$(this).closest("form").submit();
-			});
-		});
-	</script>
-
-
 </body>
 
 </html>

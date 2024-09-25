@@ -7,10 +7,12 @@
 		<div class="container">
 			<div th:if="${@userSession.loggedIn}">
 				<p><span th:text="#{label.user}">User</span> [[${@userSession.currentUsername}]]</p>
+				<a th:href="@{/user/poll}">Home</a> -
 				<a th:href="@{/admin/dashboard}">Dashboard</a> -
 				<a th:href="@{/logout}" th:text="#{label.logout}">Logout</a>
 			</div>
 		</div>
+		<br>
 	</footer>
 	
     <script th:src="@{/static/jquery-3.7.1.min.js}" ></script>

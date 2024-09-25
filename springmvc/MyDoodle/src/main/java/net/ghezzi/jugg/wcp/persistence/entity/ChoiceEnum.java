@@ -6,4 +6,13 @@ public enum ChoiceEnum {
 	YES,
 	MAYBE;
 
+	/**
+	 * Ritorna i ChoiceEnum nell'ordine di visualizzazione
+	 * @return
+	 */
+	public static ChoiceEnum[] getSortedValues() {
+		return new ChoiceEnum[] {YES, NO, MAYBE};
+	}
 }
+
+

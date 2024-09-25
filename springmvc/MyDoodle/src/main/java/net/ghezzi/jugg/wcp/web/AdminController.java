@@ -19,14 +19,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import net.ghezzi.jugg.wcp.components.UserSession;
 import net.ghezzi.jugg.wcp.core.WcpConfiguration;
 import net.ghezzi.jugg.wcp.persistence.entity.Poll;
+import net.ghezzi.jugg.wcp.persistence.entity.UserProfile;
 import net.ghezzi.jugg.wcp.persistence.repository.PollDao;
 import net.yadaframework.components.YadaNotify;
 import net.yadaframework.components.YadaUtil;
 import net.yadaframework.persistence.YadaDataTableDao;
 import net.yadaframework.persistence.YadaSql;
 import net.yadaframework.web.YadaDatatablesRequest;
+import net.yadaframework.web.YadaViews;
 
 @Controller
 @RequestMapping("/admin")
@@ -37,6 +40,7 @@ public class AdminController {
 	@Autowired private PollDao pollDao;
 	@Autowired private YadaNotify yadaNotify;
 	@Autowired private YadaDataTableDao yadaDataTableDao;
+	@Autowired private UserSession userSession;
 	
 	public final static int MAX_DAYS = 64; // Max interval a poll can cover
 	
@@ -45,13 +49,14 @@ public class AdminController {
 		Poll toEdit = null;
 		Exception exception = null;
 		if (pollId!=null) {
+			UserProfile currentUser = userSession.getCurrentUserProfile();
 			try {
-				toEdit = pollDao.find(pollId);
+				toEdit = pollDao.findForUser(currentUser, pollId);
 			} catch (Exception e) {
 				exception = e;
 			}
 			if (toEdit==null) {
-				log.error("Can't find Poll with id={} - (creating new)", pollId, exception);
+				log.error("Can't find Poll with id={} for user {} - (creating new)", pollId, currentUser, exception);
 			} else if (log.isDebugEnabled()) {
 				log.debug("Poll {} fetched from DB as ModelAttribute", pollId);
 			}
@@ -66,6 +71,18 @@ public class AdminController {
 	public String dashboard(Model model, Locale locale) {
 		return "/admin/dashboard";
 	}
+
+	@RequestMapping("/ajaxDeletePoll")
+	public String ajaxDeletePoll(Poll poll, Model model, Locale locale) {
+		// Poll is not null only if the current user is the owner
+		String title = poll!=null?poll.getTitle():"";
+		boolean deleted = pollDao.delete(poll);
+		if (deleted) {
+			// TODO i18n
+			return yadaNotify.title("Delete Poll", model).ok().message("Poll with title '{}' deleted", title).add();
+		}
+		return YadaViews.AJAX_RELOAD;
+	}
 	
 	/**
 	 * Show the poll form in a modal
@@ -73,8 +90,8 @@ public class AdminController {
 	 * @param model
 	 * @param locale
 	 */
-	@RequestMapping("/ajaxAddEditPoll")
-	public String ajaxAddEditPoll(Poll poll, Model model, Locale locale) {
+	@RequestMapping("/ajaxPollForm")
+	public String ajaxPollForm(Poll poll, Model model, Locale locale) {
 		return "/admin/pollForm";
 	}
 	
@@ -86,6 +103,9 @@ public class AdminController {
 	 */
 	@RequestMapping("/ajaxAddOrUpdatePoll")
 	public String ajaxAddOrUpdatePoll(Poll poll, BindingResult pollBinding, Model model, Locale locale) {
+		boolean addPoll = poll.getId()==null;
+		UserProfile currentUser = userSession.getCurrentUserProfile();
+		poll.setOwner(currentUser);
 		ValidationUtils.rejectIfEmptyOrWhitespace(pollBinding, "title", "validation.value.empty");
 		Date startDay = poll.getStartDay();
 		Date endDay = poll.getEndDay();
@@ -111,11 +131,10 @@ public class AdminController {
 			}
 		}
 		if (pollBinding.hasErrors()) {
-			return ajaxAddEditPoll(poll, model, locale);
+			return ajaxPollForm(poll, model, locale);
 		}
-		boolean created = poll.getId()==null;
 		poll = pollDao.save(poll);
-		if (created) {
+		if (addPoll) {
 			return yadaNotify.title("New Poll", model).ok().message("Poll with title '{}' created", poll.getTitle()).add();
 		} else {
 			return yadaNotify.title("Edit Poll", model).ok().message("Poll saved").add();
@@ -124,7 +143,13 @@ public class AdminController {
 	
 	@RequestMapping(value ="/pollTablePage", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody public Map<String, Object> pollTablePage(YadaDatatablesRequest yadaDatatablesRequest, Locale locale) {
+		UserProfile currentUser = userSession.getCurrentUserProfile();
+		// Condizione per mostrare solo i Poll dell'utente corrente
 		YadaSql yadaSql = yadaDatatablesRequest.getYadaSql();
+		yadaSql.join("join e.owner up");
+		yadaSql.where("up=:userProfile").and();
+		yadaSql.setParameter("userProfile", currentUser);
+		//
 		Map<String, Object> result = yadaDataTableDao.getConvertedJsonPage(yadaDatatablesRequest, Poll.class, locale);
 		return result;
 	}

@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
@@ -54,6 +55,9 @@ public class Poll {
 	 */
 	@Temporal(TemporalType.DATE)
 	private Date chosenDay;
+	
+	@ManyToOne
+	private UserProfile owner;
 	
 	@Transient
 	public boolean isClosed() {
@@ -118,6 +122,14 @@ public class Poll {
 	
 	public String toString() {
 		return title + "(" + id + ")";
+	}
+
+	public UserProfile getOwner() {
+		return owner;
+	}
+
+	public void setOwner(UserProfile owner) {
+		this.owner = owner;
 	}
 	
 }

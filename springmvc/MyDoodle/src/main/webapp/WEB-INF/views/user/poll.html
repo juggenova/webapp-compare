@@ -12,18 +12,19 @@
 
 <main class="container">
 
-	<div th:each="poll : ${polls}">
+	<div th:each="poll : ${polls}" class="pollView">
+		<h3 th:text="${poll.title}">Prossima riunione JUG</h3>
 		<div class="pollAttributes">
-			<div th:text="#{label.title}">Titolo</div><div th:text="${poll.title}">Prossima riunione JUG</div>
+			<div>ID</div><div>#[[${poll.id}]]</div>
 			<div th:text="#{label.description}">Descrizione</div><div th:text="${poll.description}">L'argomento dell'incontro sarà...</div>
-			<div>Deadline</div><div><span th:text="${poll.deadline}">20 Ottobre 2024</span> <a th:unless="${poll.closed}" th:href="@{/user/closePoll(id=${poll.id})}">Termina adesso</a></div>
+			<div>Deadline</div><div><span th:text="${#dates.format(poll.deadline, 'EEEE d MMMM HH:mm')}">20 Ottobre 2024</span> <a th:if="${@userSession.isLoggedUser(poll.owner)}" th:unless="${poll.closed}" th:href="@{/user/closePoll(id=${poll.id})}">Termina adesso</a></div>
 		</div>
 		
 		<th:block th:if="${poll.closed}">
 			<p th:text="#{label.pollclosed}">Le votazioni sono chiuse!</p>
-			<p><span th:text="#{label.chosenday}">Giorno scelto:</span> [[${poll.chosenDay}]]</p>
+			<p><span th:text="#{label.chosenday}">Giorno scelto:</span> [[${#dates.format(poll.chosenDay, 'EEEE d MMMM')}]]</p>
 		</th:block>
-		<th:block th:unless="${poll.closed}" th:with="sortedVotes=${pollToVote.get(poll)}">
+		<th:block th:unless="${poll.closed}">
 			<div th:replace="~{/user/choices :: body}"></div>
 		</th:block>
 	</div>
