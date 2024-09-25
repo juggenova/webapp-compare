@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -110,6 +111,7 @@ public class AdminController {
 		Date startDay = poll.getStartDay();
 		Date endDay = poll.getEndDay();
 		Date deadlineTime = poll.getDeadline();
+		Date now = new Date();
 		ValidationUtils.rejectIfEmpty(pollBinding, "startDay", "poll.validation.notadate");
 		ValidationUtils.rejectIfEmpty(pollBinding, "endDay", "poll.validation.notadate");
 		ValidationUtils.rejectIfEmpty(pollBinding, "deadline", "poll.validation.notadate");
@@ -117,10 +119,8 @@ public class AdminController {
 			if (startDay.after(endDay)) {
 				pollBinding.rejectValue("endDay", "poll.validation.endbeforestart");
 			}
-			Calendar endDayCalendar = Calendar.getInstance();
-			endDayCalendar.setTime(endDay);
-			Date endDayTime = YadaUtil.roundForwardToAlmostMidnight(endDayCalendar).getTime();
-			if (deadlineTime.after(endDayTime) || deadlineTime.before(startDay)) {
+			Date startDayTime = YadaUtil.roundBackToMidnight(startDay, TimeZone.getDefault());
+			if (deadlineTime.after(startDayTime) || deadlineTime.before(now)) {
 				pollBinding.rejectValue("deadline", "poll.validation.deadlineinvalid");
 			}
 			// Check max interval

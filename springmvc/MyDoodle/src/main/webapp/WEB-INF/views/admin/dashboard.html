@@ -12,7 +12,6 @@
 
 <main class="container">
 	<h2>Dashboard</h2>
-	<a class="yadaAjax" th:href="@{/admin/ajaxPollForm}">New Poll</a>
 	
 	<div th:replace="~{/yada/dataTableCrud(tableId='pollTable',columns=${ {'ID','Title','startDay','endDay'} }, classes='yadaNoLoader')}"></div>
 	
