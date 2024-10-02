@@ -20,8 +20,22 @@ apply plugin: 'eclipse-wtp'
 apply plugin: 'net.yadaframework.tools'
 apply plugin: 'org.hidetake.ssh'        // https://gradle-ssh-plugin.github.io
 
-def YadaWebLib = "$projectDir/../../../yadaframework/YadaWeb";
-def YadaWebCmsLib = "$projectDir/../../../yadaframework/YadaWebCMS";
+// Reading the gradle.local.properties file
+def yadaSourceRepoPath = null;
+def yadaProjects = null;
+Properties localProps = new Properties()
+File localPropsFile = file('gradle.local.properties')
+if(localPropsFile.exists()) {
+    localPropsFile.withInputStream { 
+        localProps.load(it) 
+    }
+    yadaSourceRepoPath = localProps.getProperty('yadaSourceRepoPath')
+    yadaProjects = localProps.getProperty('yadaProjects')
+}
+
+def YadaWebLib = "$yadaSourceRepoPath/YadaWeb";
+def YadaWebSecurityLib = "$yadaSourceRepoPath/YadaWebSecurity";
+def YadaWebCmsLib = "$yadaSourceRepoPath/YadaWebCMS";
 def webAppDir = "$projectDir/src/main/webapp"
 
 sassCompile {
@@ -92,33 +106,52 @@ repositories {
 }
 
 dependencies {
+	if (yadaSourceRepoPath==null) {
+		println("Using published jars for Yada");
+		implementation 'net.yadaframework:yadaweb:0.7.7.R3'
+		implementation 'net.yadaframework:yadawebsecurity:0.7.7.R3'
+		// implementation 'net.yadaframework:yadawebcms:0.7.7.R3'
+		// implementation 'net.yadaframework:yadawebcommerce:0.7.7.R3'
+	}
+
     // Add here any library that you might need (then run "Refresh Gradle Project")
     
-	implementation	 project(':YadaWeb')
-	implementation	 project(':YadaWebSecurity')
-	// implementation	 project(':YadaWebCMS')
-	// implementation	 project(':YadaWebCommerce')
-
-	// Your libs here:
-	// implementation 'xxx'
     implementation 'org.apache.tomcat.embed:tomcat-embed-core:10.1.19'	
 	
     // For embedded mariadb
-    /*
 	implementation('ch.vorburger.mariaDB4j:mariaDB4j:3.+') {
 		// mariaDB4j pulls the latest version of spring core but this is never a good thing.
         exclude group: 'org.springframework', module: 'spring-core'
     }
-    */	
+    
     // Needed in Tomcat 8 at runtime
-    runtimeOnly 'commons-beanutils:commons-beanutils:1.9.4'
-    runtimeOnly 'commons-jxpath:commons-jxpath:1.3'
+    // runtimeOnly 'commons-beanutils:commons-beanutils:1.9.4'
+    // runtimeOnly 'commons-jxpath:commons-jxpath:1.3'
 
     testImplementation 'junit:junit:4.13.+'
 }
 
+if (yadaSourceRepoPath!=null && yadaProjects!=null) {
+	println("Using local Yada sources instead of compiled jars");
+	def yadaProjectArray = yadaProjects.split(',')
+    yadaProjectArray.each { projectName ->
+        dependencies {
+            implementation project(":${projectName}")
+        }
+    }
+}
+
 run {
+    doFirst {
+        // Prevents "Conflicting persistence unit definitions for name 'yadaPersistenceUnit'"
+        file("bin/main/META-INF/persistence.xml").delete(); 
+    }
     dependsOn sassCompile
+	// Gradle doesn't pass the system properties over to the process, 
+	// so I need to copy them in order to use them with Commons Configuration
+	// but I need to exclude the java properties because they might come
+	// from a local java 8 installation and generate errors on java 17
+	systemProperties System.properties.findAll { key, value -> !key.startsWith('java') }
     args = ['wcpdev', "$webAppDir", ".", "dev"]
     mainClass = 'net.yadaframework.core.YadaTomcatServer'
 }

@@ -1,9 +1,26 @@
 rootProject.name = 'MyDoodle'
-include 'YadaWeb'
-project(':YadaWeb').projectDir = "../../../yadaframework/YadaWeb" as File
-include 'YadaWebSecurity'
-project(':YadaWebSecurity').projectDir = "../../../yadaframework/YadaWebSecurity" as File
-// include 'YadaWebCMS'
-// project(':YadaWebCMS').projectDir = "../../../yadaframework/YadaWebCMS" as File
-// include 'YadaWebCommerce'
-// project(':YadaWebCommerce').projectDir = "../../../yadaframework/YadaWebCommerce" as File
+
+// Inclusione dinamica dei progetti YadaFramework in base alle impostazioni di gradle.local.properties
+Properties localProps = new Properties()
+File localPropsFile = file('gradle.local.properties')
+if(localPropsFile.exists()) {
+    localPropsFile.withInputStream { 
+        localProps.load(it) 
+    }
+
+    def yadaSourceRepoPath = localProps.getProperty('yadaSourceRepoPath')
+    def yadaProjects = localProps.getProperty('yadaProjects')
+	if (yadaSourceRepoPath!=null && yadaProjects!=null) {
+		def yadaframework = new File(rootDir, yadaSourceRepoPath);
+		def yadaProjectArray = yadaProjects.split(',')
+		print("Adding Yada source projects to the build: ")
+	    yadaframework.eachDir { dir ->
+	        if (yadaProjectArray.contains(dir.name)) {
+	        	print "$dir.name "
+	            include(dir.name)
+	            findProject(":${dir.name}").projectDir = dir
+	        }
+	    }
+	    println ""
+	}
+}

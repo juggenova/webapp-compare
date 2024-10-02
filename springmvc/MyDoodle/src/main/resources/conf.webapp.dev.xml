@@ -30,25 +30,19 @@
 	<email>
 		<enabled>true</enabled>
 		<!-- Remove this list to enable email to everyone -->
-		<validEmail>ghzcst@gmail.com</validEmail>
-		<validEmail>test1@ghezzi.net</validEmail>
-		<validEmail>test2@ghezzi.net</validEmail>
-		<validEmail>test3@ghezzi.net</validEmail>
-		<validEmail>test4@ghezzi.net</validEmail>
-		<validEmail>user1@ghezzi.net</validEmail>
-		<validEmail>user2@ghezzi.net</validEmail>
-		<validEmail>user3@ghezzi.net</validEmail>
-		<validEmail>user4@ghezzi.net</validEmail>
-		<validEmail>user5@ghezzi.net</validEmail>
+		<validEmail>test@example.com</validEmail>
 	</email>
 
 	<database enabled="true">
 		<jndiname>java:comp/env/jdbc/wcpdbdev</jndiname> <!-- Not used when <datasource> is defined -->
 		<showSql>false</showSql>
 		<databaseMigrationAtStartup>true</databaseMigrationAtStartup>
-		<embedded enabled="true">
-			<datadir>/srv/wcpdev/embeddedDB</datadir>
-			<!-- Path of the sql file that will be loaded at startup 
+		<embedded enabled="true" port="63306">
+			<baseDir>${config/paths/basePath}/embeddedDB/MariaDB</baseDir>
+			<datadir>${config/paths/basePath}/embeddedDB/data</datadir>
+			<tmpDir>${config/paths/basePath}/embeddedDB/tmp</tmpDir>
+			<!-- Path of the sql file that will be loaded at db creation.
+			Currently not needed.
 			<sourceSql>/srv/wcpdev/source.sql</sourceSql>
 			-->
 		</embedded>
@@ -77,47 +71,12 @@
 	<setup>
 		<users>
 			<user>
-				<email>admin@ghezzi.net</email>
-				<password>qweqwe</password>
+				<email>test@example.com</email>
+				<password>qweqweqwe</password>
 				<locale>en_US</locale>
 				<timezone>Europe/Rome</timezone>
 				<role>USER</role>
 				<role>ADMIN</role>
-			</user>
-			<user>
-				<email>user1@ghezzi.net</email>
-				<password>user1</password>
-				<locale>it_IT</locale>
-				<timezone>Europe/Rome</timezone>
-				<role>USER</role>
-			</user>
-			<user>
-				<email>user2@ghezzi.net</email>
-				<password>user2</password>
-				<locale>it_IT</locale>
-				<timezone>Europe/Rome</timezone>
-				<role>USER</role>
-			</user>
-			<user>
-				<email>user3@ghezzi.net</email>
-				<password>user3</password>
-				<locale>it_IT</locale>
-				<timezone>Europe/Rome</timezone>
-				<role>USER</role>
-			</user>
-			<user>
-				<email>user4@ghezzi.net</email>
-				<password>user4</password>
-				<locale>it_IT</locale>
-				<timezone>Europe/Rome</timezone>
-				<role>USER</role>
-			</user>
-			<user>
-				<email>user5@ghezzi.net</email>
-				<password>user5</password>
-				<locale>it_IT</locale>
-				<timezone>Europe/Rome</timezone>
-				<role>USER</role>
 			</user>
 		</users>
 	</setup>
