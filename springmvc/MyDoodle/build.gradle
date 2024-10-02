@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath 'net.yadaframework:yadatools:+'
+        classpath 'net.yadaframework:yadatools:0.7.7.R4'
     }
 }
 
@@ -108,10 +108,8 @@ repositories {
 dependencies {
 	if (yadaSourceRepoPath==null) {
 		println("Using published jars for Yada");
-		implementation 'net.yadaframework:yadaweb:0.7.7.R3'
-		implementation 'net.yadaframework:yadawebsecurity:0.7.7.R3'
-		// implementation 'net.yadaframework:yadawebcms:0.7.7.R3'
-		// implementation 'net.yadaframework:yadawebcommerce:0.7.7.R3'
+		implementation 'net.yadaframework:yadaweb:0.7.7.R4'
+		implementation 'net.yadaframework:yadawebsecurity:0.7.7.R4'
 	}
 
     // Add here any library that you might need (then run "Refresh Gradle Project")
