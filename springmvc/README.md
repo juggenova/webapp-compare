@@ -136,14 +136,19 @@ La versione attuale dell'applicazione soddisfa tutti i requisiti richiesti ed è
 Spero che qualcuno colga lo spunto e provi a implementare qualche parte in maniera diversa, dando origine a un confronto, sicuramente istruttivo per tutti, che possa essere oggetto di una prossima riunione del [JUG Genova](https://juggenova.it/).
 
 # Quick Run
-L'applicazione può essere provata semplicemente scaricando la più recente versione dei sorgenti e lanciando uno script, con l'unico prerequisito che sia presente nel sistema una qualunque versione di Java (dalla 8 in su): verranno scaricate tutte le librerie necessarie, installato il DB e lanciato il server. Tutti i file creati dall'applicazione saranno contenuti in `/srv/wcpdev` per cui è anche facile disfarsene dopo aver stoppato il server e killato il processo `mariadbd`.
+L'applicazione può essere provata semplicemente scaricando la più recente versione dei sorgenti e lanciando `runSite.bat` su windows o `runSite.sh` su linux. Poi puntare il
+browser su `localhost:8080`.
 
-Le istruzioni sono quasi identiche tra windows e linux:
+In fase di startup viene creata un'utenza predefinita `test@example.com` con password `qweqweqwe`. E' comunque possibile registrarsi con qualunque utenza tenendo presente che le email di conferma non verranno inviate (va prima configurato un mail server) per cui sarà necessario reperire nel log il link di conferma da copiare nel browser.
 
-- assicurarsi di avere un java installato. Si può scaricare da [java.com](https://www.java.com/en/download/) oppure su linux ottenere con `apt install openjdk-8-jre`
-- ottenere i sorgenti, via git o scompattando [lo zip](https://github.com/juggenova/webapp-compare/archive/refs/heads/main.zip)
-- aprire un terminale / shell / DOS prompt ed entrare nel folder `MyDoodle` 
-- su linux sono necessarie queste operazioni preliminari:
+L'unico prerequisito per lanciare l'applicazione è che sia presente nel sistema una qualunque versione di Java (dalla 8 in su): verranno scaricate tutte le librerie necessarie, installato il DB e lanciato il server. Tutti i file aggiunti allo startup saranno contenuti o nel folder di lancio o in `/srv/wcpdev` per cui è anche facile disfarsene dopo aver stoppato il server e killato il processo `mariadbd`.
+
+Più nel dettaglio, la procedura guidata è questa:
+
+- assicurarsi di avere un java installato. Si può scaricare da [java.com](https://www.java.com/en/download/) oppure su linux ottenere con un package manager tipo `apt install openjdk-8-jre`
+- scaricare i sorgenti, clonandoli via git oppure scompattando [lo zip](https://github.com/juggenova/webapp-compare/archive/refs/heads/main.zip)
+- su linux sono necessarie queste operazioni aggiuntive dopo essere entrati nel folder `MyDoodle` via shell: 
+
 
 	```
     chmod +x runSite.sh gradlew
@@ -151,10 +156,9 @@ Le istruzioni sono quasi identiche tra windows e linux:
 	sudo chown iltuoutente /srv/wcpdev
 	```
 
-- lanciare `runSite.bat` oppure `./runSite.sh`
+- lanciare `runSite.bat` oppure `./runSite.sh`, con doppio click oppure da command prompt
 - aprire il browser su `localhost:8080`
 
-In fase di startup viene creata un'utenza predefinita `test@example.com` con password `qweqweqwe`. E' comunque possibile registrarsi con qualunque utenza tenendo presente che le email di conferma non verranno inviate (vanno configurate) per cui sarà necessario reperire nel log il link di conferma da copiare nel browser.
 
     
 
