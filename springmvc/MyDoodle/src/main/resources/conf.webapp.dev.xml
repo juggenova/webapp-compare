@@ -12,25 +12,21 @@
 		<basePath>/srv/wcpdev</basePath>
 		<contentDir name="contents" url="/contents"></contentDir>
 	</paths>
-	<!-- Use when more than one application is running on the same server 
 	<tomcat>
 		<ports>
-			<http></http>
-			<https></https>
-			<ajp></ajp>
-			<ajpRedirect></ajpRedirect>
-			<shutdown></shutdown>
+			<http>8080</http>
+			<https>8443</https>
+			<ajp>8009</ajp>
+			<ajpRedirect>8443</ajpRedirect>
+			<shutdown>8005</shutdown>
 		</ports>
-		<keystore>
-			<file></file>
-			<password></password>
-		</keystore>
 	</tomcat>
-	-->
+
 	<email>
 		<enabled>true</enabled>
 		<!-- Remove this list to enable email to everyone -->
 		<validEmail>test@example.com</validEmail>
+		<validEmail>test2@example.com</validEmail>
 	</email>
 
 	<database enabled="true">

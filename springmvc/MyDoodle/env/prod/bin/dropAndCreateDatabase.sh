@@ -25,6 +25,5 @@ FLUSH PRIVILEGES;
 SQLCOMMAND
 
 mysql -u root --password=myprodpwd --host=$hostname wcpdbprod < wcp.sql
-mysql -u root --password=myprodpwd --host=$hostname wcpdbprod < wcpextra.sql
 
 echo Done.

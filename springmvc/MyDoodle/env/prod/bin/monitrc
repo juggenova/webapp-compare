@@ -1,0 +1,6 @@
+check process wcpprod with pidfile /srv/wcpprod/pids/wcpprod.pid
+start program = "/srv/wcpprod/bin/monit_start.sh > /dev/null 2>&1" as uid "tomcat8" and gid "tomcat8" with timeout 60 seconds
+stop program = "/srv/wcpprod/bin/monit_stop.sh" as uid "tomcat8" and gid "tomcat8" with timeout 60 seconds
+every 2 cycles
+if 5 restarts within 5 cycles then timeout
+if cpu > 50% for 5 cycles then restart

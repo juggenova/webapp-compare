@@ -57,6 +57,11 @@ public class HomeController {
 		}
 	}
 	
+	@GetMapping("/privacy")
+	public String privacy(Locale locale) {
+		return "/privacy";
+	}
+	
 	@GetMapping("/loginPost")
 	public String invalidLoginGet(Locale locale) {
 		// Login with GET will redirect to home

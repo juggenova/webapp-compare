@@ -12,12 +12,21 @@
 
 <main class="container">
 	
-	<div class="card" th:unless="${@userSession.loggedIn}">
+	<div class="card small" th:unless="${@userSession.loggedIn}">
 		<div class="card-body">
 			<div th:replace="~{/modalLogin :: #loginForm}">Login form here</div>
 			<a th:href="@{/registerPage}" th:text="#{register.link}">Create account</a>
 		</div>
 	</div>
+	
+	<p class="disclaimer">
+	Questo è un prototipo il cui scopo è di porre le basi per un
+	confronto sulle tecniche di programmazione web nell'ambito del 
+	<a href="https://juggenova.it/" target="_blank">JUG Genova</a> come illustrato 
+	<a href="https://github.com/juggenova/webapp-compare" target="_blank">nel nostro repository</a>.
+	Non ha la pretesa di offrire un'implementazione completa, robusta e persistente
+	delle funzionalità del sito cui si ispira e non deve quindi essere usato in tal senso.
+	</p>
 	
 </main>
 

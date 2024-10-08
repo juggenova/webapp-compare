@@ -1,0 +1,27 @@
+// Proprietà per il deploy sugli ambienti remoti
+
+server {
+	host = "example.com"
+}
+
+// Override in base agli ambienti
+environments {
+
+	prod {
+		server {
+			user = "myuser"
+			identity = new File("C:\\somepath\\myprod.private.pem")
+			deploydir = "/srv/wcpprod/webapp"
+		}
+	}
+	col {
+		server {
+			user = "myusercol"
+			identity = new File("C:\\somepath\\mycol.private.pem")
+			deploydir = "/srv/wcpcol/webapp"
+		}
+	}
+
+}
+
+

@@ -12,13 +12,19 @@ plugins {
     id 'application' // for the "run" task
 	id 'org.hidetake.ssh' version '2.10.1'
 	id 'com.meiuwa.gradle.sass' version "1.0.0"	// Only when using SASS !!! v2.0.0 may not work
+	id("com.github.node-gradle.node") version "3.5.1"
 }
 
 ext.acronym = 'wcp'
+
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 apply plugin: 'net.yadaframework.tools'
 apply plugin: 'org.hidetake.ssh'        // https://gradle-ssh-plugin.github.io
+
+if (!project.hasProperty('env')) {
+	ext.env="envUnset"
+}
 
 // Reading the gradle.local.properties file
 def yadaSourceRepoPath = null;
@@ -37,6 +43,12 @@ def YadaWebLib = "$yadaSourceRepoPath/YadaWeb";
 def YadaWebSecurityLib = "$yadaSourceRepoPath/YadaWebSecurity";
 def YadaWebCmsLib = "$yadaSourceRepoPath/YadaWebCMS";
 def webAppDir = "$projectDir/src/main/webapp"
+def acroenv = "${acronym}${env}"
+def startTime = new Date()
+def timestamp = startTime.format('yyyyMMdd@HHmm')
+def warName = "${acronym}.${timestamp}.war"
+def warPath = "${buildDir}/libs/$warName"
+def config = new ConfigSlurper(env).parse(new File("/srv/wcpdev/bin/deploy.config").toURI().toURL())
 
 sassCompile {
     source = project.files(fileTree("src/main/webapp/res/css"), fileTree("$YadaWebLib/src/main/resources/net/yadaframework/views/yada/css"), fileTree("$YadaWebCmsLib/src/main/resources/net/yadaframework/views/yada/css")) 
@@ -199,3 +211,179 @@ sass {
     }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+// Deploy
+/////////////////////////////////////////////////////////////////////////////////////////
+import groovy.swing.SwingBuilder
+
+// ssh plugin
+remotes {
+	deployHost {
+		host = config.server.host
+		user = config.server.user
+		identity = config.server.identity
+		knownHosts = addHostKey(file("known_hosts"))
+		jschLog=true
+	}
+}
+
+ssh.settings {
+	jschLog = true
+}
+
+println "acronym=${acronym}"
+println "env=${env}"
+println "acroenv=${acroenv}"
+println "targetHost=${config.server.host}"
+println ""
+
+/**
+ * Opens a confirmation dialog
+ * @param prompt
+ * @return
+ */
+def confirm(String prompt) {
+	// Adapted from https://www.timroes.de/2014/01/19/using-password-prompts-with-gradle-build-files/
+	def yn = ''
+	new SwingBuilder().edt {
+	  dialog(modal: true, // Otherwise the build will continue running before you closed the dialog
+		  title: "Confirmation", // Dialog title
+		  alwaysOnTop: true, // pretty much what the name says
+		  resizable: false, // Don't allow the user to resize the dialog
+		  locationRelativeTo: null, // Place dialog in center of the screen
+		  pack: true, // We need to pack the dialog (so it will take the size of it's children
+		  show: true // Let's show it
+	  ) {
+		vbox { // Put everything below each other
+		  label(text: prompt + " (y/N)")
+		  input = textField()
+		  button(defaultButton: true, text: 'OK', actionPerformed: {
+			yn = input.text; // Set pass variable to value of input field
+			dispose(); // Close dialog
+		  })
+		}
+	  }
+	}
+	// def yn = System.console().readLine(prompt + " (y/N)");
+	return yn=="y";
+}
+
+task incrementBuild(type: JavaExec) {
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'net.yadaframework.tools.AntIncrementBuild'
+	args "$webAppDir/WEB-INF/build.properties"
+}
+
+// destinazione dei js applicativi minimizzati 
+def appJsOutputFolder = file("$webAppDir/res/js/")
+
+task compressYadaJs(type: NpxTask) {
+	dependsOn npmInstall
+	def inputFolder = "$YadaWebLib/src/main/resources/net/yadaframework/views/yada/js";
+    // Set the input and output files for your JavaScript files
+    def inputFiles = fileTree(dir: inputFolder, include: '**/yada*.js')
+    def outputFile = file("${appJsOutputFolder}/yada.min.js")
+	command = 'terser'
+    args = [ // "${inputFiles}",        
+    	'--compress',
+        '--source-map',
+        '--output',
+ 		"${outputFile}"  ,
+ 		"--"
+ 	]
+ 	args.addAll(inputFiles.files.collect { it.getPath() })
+ 	inputs.files(inputFiles)
+ 	inputs.dir(inputFolder)
+    outputs.file(outputFile)
+}
+
+task compressAppJs(type: NpxTask) {
+	dependsOn compressYadaJs 
+	def inputFolder = "$webAppDir/res/js";
+    def inputFiles = fileTree(dir: inputFolder, include: '**/*.js', exclude: ['*.min.*', '**/yada*.js'])
+    def outputFile = file("${appJsOutputFolder}/${acronym}.min.js")
+	command = 'terser'
+    args = [ // "${inputFiles}",        
+    	'--compress',
+        '--source-map',
+        '--output',
+ 		"${outputFile}"  ,
+ 		"--"
+ 	]
+ 	args.addAll(inputFiles.files.collect { it.getPath() })
+ 	inputs.files(inputFiles)
+ 	inputs.dir(inputFolder)
+    outputs.file(outputFile)
+}
+
+/**
+ * Pulisce i js applicativi dopo la minificazione e la creazione del war
+ */
+task appJsOutputClean() {
+	doLast {
+		delete fileTree(dir: appJsOutputFolder, include: ['**/*.min.js', '**/*.min.js.map', '**/*.sourcemap.json'])
+	}
+}
+
+task makeWar(dependsOn: [classes, compressAppJs], type: War) {
+	archiveFileName=warName
+	from webAppDir
+	exclude('**/*.scss')
+	exclude('**/persistence.xml')
+	exclude('META-INF/persistence.xml')
+	if (env=='col' || env=='prod') {
+		exclude('META-INF/context.xml')
+		processResources {
+			exclude('**/conf.webapp.dev.xml')
+			exclude('**/logback.xml')
+			exclude('META-INF/persistence.xml')
+		}
+		from("/env/${env}/logback.xml"){
+			into "WEB-INF/classes"
+		}
+		from("/env/${env}/context.xml") {
+			into "META-INF"
+		}
+		from("/env/${env}/robots.txt")
+	}
+	if (env=='col') {
+		from("/env/col/conf.webapp.col.xml") {
+			into "WEB-INF/classes"
+		}
+	}
+    doLast {
+        println "WAR generated at ${archiveFile.get().asFile.absolutePath}"
+    }	
+}
+
+// This removes minified js files so we don't commit them
+makeWar.finalizedBy appJsOutputClean
+appJsOutputClean.mustRunAfter(makeWar)
+
+task deployWar(dependsOn: [incrementBuild, makeWar]) {
+	doLast {
+		if ((env!='prod') || confirm("Overwrite existing application on ${env}?")) {
+			println "Sending files to ${env}..."
+			ssh.run {
+				session(remotes.deployHost) {
+					put from: warPath, into: "/srv/${acroenv}/deploy/$warName"
+				}
+			}
+			println "Running deploy script..."
+			ssh.run {
+				session(remotes.deployHost) {
+					execute """/srv/${acroenv}/bin/deploy.sh /srv/${acroenv}/deploy/${warName}"""
+				}
+			}
+			delete warPath
+			println "Deploy of ${warName} done."
+		} else {
+			println "Aborted."
+		}
+	}
+}
+
+jar {
+	// This prevents "copy task failes because no duplicate handling strategy has been set" error on persistence.xml that is found in multiple places
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

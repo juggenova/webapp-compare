@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}"
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:yada="http://www.yadaframework.net">
+<head>
+	<title>Doodle Clone</title>
+	<th:block th:replace="~{/header :: headFragment}"/>
+</head>
+<body>
+
+<th:block th:replace="~{/header :: body}"/>
+
+<main class="container">
+	
+	<div class="card">
+		<div class="card-body">
+ <h1>Privacy Policy</h1>
+    <p>Questa informativa sulla privacy descrive come il sito <strong>https://mydoodle.ghezzi.net/</strong> (di seguito "Sito") raccoglie, utilizza e protegge i dati personali degli utenti.</p>
+
+    <h2>Dati personali raccolti</h2>
+    <p>Il Sito raccoglie solo i seguenti dati personali forniti volontariamente dagli utenti:</p>
+    <ul>
+        <li>Nome</li>
+        <li>Cognome</li>
+        <li>Indirizzo email</li>
+    </ul>
+
+    <h2>Finalità del trattamento</h2>
+    <p>I dati personali raccolti vengono utilizzati esclusivamente per il corretto funzionamento del Sito e per fornire i servizi richiesti dagli utenti. In nessun caso i dati personali verranno comunicati a terzi o utilizzati per finalità diverse.</p>
+
+    <h2>Base giuridica del trattamento</h2>
+    <p>Il trattamento dei dati personali è basato sul consenso fornito dagli utenti al momento della registrazione e della fornitura delle informazioni necessarie per l'utilizzo del Sito.</p>
+
+    <h2>Conservazione dei dati</h2>
+    <p>I dati personali saranno conservati per il tempo strettamente necessario all'erogazione dei servizi offerti dal Sito e verranno cancellati su richiesta dell'utente, come indicato nella sezione seguente.</p>
+
+    <h2>Diritti degli utenti</h2>
+    <p>Gli utenti hanno il diritto di:</p>
+    <ul>
+        <li>Accedere ai propri dati personali;</li>
+        <li>Richiedere la rettifica o l'aggiornamento dei dati;</li>
+        <li>Richiedere la cancellazione dei dati personali.</li>
+    </ul>
+    <p>Per esercitare questi diritti o per qualsiasi altra richiesta relativa ai propri dati personali, gli utenti possono contattare il responsabile del trattamento dei dati.</p>
+
+    <h2>Responsabile del trattamento</h2>
+    <p>Il responsabile del trattamento dei dati personali raccolti attraverso il Sito è:</p>
+    <p><strong>Cristian Ghezzi</strong><br>
+    Email: <a id="jsemail" href="#">#</a></p>
+
+    <h2>Modifiche alla privacy policy</h2>
+    <p>Questa informativa potrebbe essere soggetta a modifiche nel tempo. Si invitano gli utenti a consultare periodicamente questa pagina per rimanere aggiornati su eventuali variazioni.</p>
+
+    <p><em>Ultimo aggiornamento</em>: 7 ottobre 2024</p>
+	</div>
+	</div>
+	
+</main>
+
+<th:block th:replace="~{/footer :: body}"/>
+
+<script type="text/javascript" th:inline="javascript">
+	//<![CDATA[
+	 function deobfuscate(str) {
+        return str.split('').map(function(char) {
+            return String.fromCharCode(char.charCodeAt(0) - 3);
+        }).join('');
+    }		
+	wcp.ready(function() {
+	    var obfuscatedUser = 'p|grrgoh'; 
+	    var obfuscatedDomain = 'Cjkh}}l1qhw';
+		var user = deobfuscate(obfuscatedUser);
+	    var domain = deobfuscate(obfuscatedDomain);
+	    $('#jsemail').attr('href', 'mailto:' + user + domain);
+	    $('#jsemail').html(user + domain);	    
+	});
+	
+	//]]>
+
+</script>
+
+</body>
+</html>

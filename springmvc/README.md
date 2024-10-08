@@ -1,6 +1,10 @@
 # springmvc
 **Author:** Cristian Ghezzi
 
+## Demo
+Un'installazione dell'applicazione potrebbe essere visibile a questo indirizzo: https://mydoodle.ghezzi.net/.
+"Potrebbe" essere visibile perché il suo funzionamento non è garantito nel tempo e non dovrebbe essere intesa come uno strumento da utilizzare veramente.
+
 ## Architettura
 Questa versione utilizza **Spring MVC** su Java 17 per implementare la web application.
 Lo stack tecnologico, a fine lavori, sarà il seguente:
