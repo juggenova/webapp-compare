@@ -50,12 +50,15 @@ def warName = "${acronym}.${timestamp}.war"
 def warPath = "${buildDir}/libs/$warName"
 def config = new ConfigSlurper(env).parse(new File("/srv/wcpdev/bin/deploy.config").toURI().toURL())
 
-sassCompile {
-    source = project.files(fileTree("src/main/webapp/res/css"), fileTree("$YadaWebLib/src/main/resources/net/yadaframework/views/yada/css"), fileTree("$YadaWebCmsLib/src/main/resources/net/yadaframework/views/yada/css")) 
-    include("**/*.sass", "**/*.scss", "**/*.css")
-    exclude("**/*.min.*", "**/_*.sass", "**/_*.scss")
-    output = file("src/main/webapp/res/css")
-}
+//sassCompile {
+//    source = project.files(fileTree("src/main/webapp/res/css"), fileTree("$YadaWebLib/src/main/resources/net/yadaframework/views/yada/css"), fileTree("$YadaWebCmsLib/src/main/resources/net/yadaframework/views/yada/css")) 
+//    include("**/*.sass", "**/*.scss", "**/*.css")
+//    exclude("**/*.min.*", "**/_*.sass", "**/_*.scss")
+//    output = file("src/main/webapp/res/css")
+//}
+
+
+
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -149,6 +152,41 @@ if (yadaSourceRepoPath!=null && yadaProjects!=null) {
             implementation project(":${projectName}")
         }
     }
+}
+
+sassCompile {
+    def inputFiles = []
+    
+    if (yadaSourceRepoPath == null) {
+        // Load CSS files from the classpath (yadaweb jar)
+        def jarResources = configurations.compileClasspath.findAll { it.name.contains('yadaweb') }.collect {
+            zipTree(it)
+        }
+        jarResources.each { jar ->
+            jar.visit { fileDetails ->
+                if (fileDetails.name.endsWith('.css') || fileDetails.name.endsWith('.sass') || fileDetails.name.endsWith('.scss')) {
+                    inputFiles.add(fileDetails.file)
+                }
+            }
+        }
+        if (inputFiles.isEmpty()) {
+            throw new GradleException("No YadaWeb CSS/SASS/SCSS files found in classpath")
+        }
+
+        source = project.files(fileTree("src/main/webapp/res/css"),inputFiles)
+    } else {
+        // Use the directories specified when yadaSourceRepoPath is set
+        source = project.files(
+            fileTree("src/main/webapp/res/css"), 
+            fileTree("$YadaWebLib/src/main/resources/net/yadaframework/views/yada/css"), 
+            fileTree("$YadaWebCmsLib/src/main/resources/net/yadaframework/views/yada/css")
+        )
+    }
+
+    include("**/*.sass", "**/*.scss", "**/*.css")
+    exclude("**/*.min.*", "**/_*.sass", "**/_*.scss")
+
+    output = file("src/main/webapp/res/css")
 }
 
 run {
@@ -278,24 +316,47 @@ task incrementBuild(type: JavaExec) {
 def appJsOutputFolder = file("$webAppDir/res/js/")
 
 task compressYadaJs(type: NpxTask) {
-	dependsOn npmInstall
-	def inputFolder = "$YadaWebLib/src/main/resources/net/yadaframework/views/yada/js";
-    // Set the input and output files for your JavaScript files
-    def inputFiles = fileTree(dir: inputFolder, include: '**/yada*.js')
+    dependsOn npmInstall
+	def inputFiles = []
+    if (yadaSourceRepoPath == null) {
+	    def jarResources = configurations.compileClasspath.findAll { it.name.contains('yadaweb') }.collect {
+	        zipTree(it)
+	    }
+	    jarResources.each { jar ->
+	        jar.visit { fileDetails ->
+	            if (fileDetails.name.endsWith('.js') && fileDetails.name.startsWith('yada')) {
+	                inputFiles.add(fileDetails.file)
+	            }
+	        }
+	    }
+	    inputs.files(inputFiles)
+	    args.addAll(inputFiles.collect { it.getPath() })
+		if (inputFiles.isEmpty()) {
+        	throw new GradleException("No yada*.js files found in classpath")
+    	}
+	} else { 
+        def inputFolder = "$YadaWebLib/src/main/resources/net/yadaframework/views/yada/js"
+	    inputs.dir(inputFolder)
+        inputFiles = fileTree(dir: inputFolder, include: '**/yada*.js')
+        inputs.files(inputFiles.files)
+        args.addAll(inputFiles.files.collect { it.getPath() })
+    }
+
     def outputFile = file("${appJsOutputFolder}/yada.min.js")
-	command = 'terser'
-    args = [ // "${inputFiles}",        
-    	'--compress',
+
+    command = 'terser'
+    args = [
+        '--compress',
         '--source-map',
         '--output',
- 		"${outputFile}"  ,
- 		"--"
- 	]
- 	args.addAll(inputFiles.files.collect { it.getPath() })
- 	inputs.files(inputFiles)
- 	inputs.dir(inputFolder)
+        "${outputFile}",
+        "--"
+    ]
+
+    // Define inputs and outputs for incremental builds
     outputs.file(outputFile)
 }
+
 
 task compressAppJs(type: NpxTask) {
 	dependsOn compressYadaJs 
@@ -357,8 +418,9 @@ task makeWar(dependsOn: [classes, compressAppJs], type: War) {
 }
 
 // This removes minified js files so we don't commit them
-makeWar.finalizedBy appJsOutputClean
-appJsOutputClean.mustRunAfter(makeWar)
+// Disabled because sometimes the yada.min.js file is not created (?!)
+// makeWar.finalizedBy appJsOutputClean
+// appJsOutputClean.mustRunAfter(makeWar)
 
 task deployWar(dependsOn: [incrementBuild, makeWar]) {
 	doLast {
