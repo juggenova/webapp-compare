@@ -1,6 +1,12 @@
-# Doodle Clone - Spring Boot + React + Tailwind CSS
+# How to Run the Doodle Clone Application
 
-This is a Doodle clone implementation for the JUG Genova webapp-compare project.
+This document provides instructions for running the Doodle Clone application, which consists of a Spring Boot backend and a React frontend with Tailwind CSS.
+
+## Prerequisites
+
+- Java 17 or higher
+- Node.js and npm
+- Maven (optional, as the project includes Maven wrapper)
 
 ## Project Structure
 
@@ -50,12 +56,23 @@ npm start
 
 The frontend will start on http://localhost:3000
 
-## Features
+## API Endpoints
 
-This application implements a Doodle clone with the following features (as per the requirements):
+The backend provides the following REST API endpoints:
 
-1. View a poll for the first week of November 2024
+- `GET /api/polls/default` - Get the default poll with its votes
+- `POST /api/polls/votes/{voteId}?choice={choice}` - Update a vote
+- `GET /api/polls/choices` - Get all possible choice values
+
+## Current Implementation
+
+The application currently implements:
+
+1. Basic poll viewing for the first week of November 2024
 2. Poll attributes (title, description, date range, voting deadline)
+
+Future versions will implement the remaining requirements:
+
 3. Preference storage
 4. Server-side storage of user preferences
 5. Automatic selection of the most voted day after deadline
@@ -63,6 +80,12 @@ This application implements a Doodle clone with the following features (as per t
 7. Login functionality
 8. Email notifications
 9. Internationalization (Italian/English)
-10. Responsive design
+10. Responsive design (already partially implemented)
 11. User registration
 12. Admin dashboard
+
+## Troubleshooting
+
+- If you encounter issues with the backend, check that port 8080 is available
+- If you encounter issues with the frontend, check that port 3000 is available
+- Make sure both the backend and frontend are running simultaneously for the application to work properly

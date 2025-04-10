@@ -12,3 +12,10 @@ Con "setup iniziale" intendo tutto ciò che occorre per creare un ambiente di sv
 
 Augment Code si è comportato abbastanza bene. Inizialmente aveva messo alcuni file nel folder padre ma dopo mia segnalazione ha corretto il problema. Si era anche dimenticato di mettere il maven wrapper ma ha risolto velocemente.
 
+## Fase 2: poll cablato (0:15)
+*Requisiti 1+2*
+
+Ho chiesto ad Augment di guardare come era implementata la versione springmvc e di implementare i due requisiti in oggetto, sembre con un poll cablato e senza database.
+Ha fatto tutto ciò che serviva.
+
+![Screenshot](/springboot-ai/readme.files/fase1-2.jpg)
