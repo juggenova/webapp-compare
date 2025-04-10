@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": "springboot-ai",
+      "name": "springboot-ai"
+    },
+    {
+      "path": "springmvc",
+      "name": "springmvc"
+    },
+  ],
+  "settings": {
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.autobuild.enabled": false
+  }
+}

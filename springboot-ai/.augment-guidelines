@@ -1,0 +1,6 @@
+# Meta information
+All memories should be stored in this project-specific file, not in the global memory file.
+
+# Project Information
+- There is a README.md file in the parent directory at C:\work\gits\jugg\webapp-compare-project\webapp-compare\README.md
+- The README.md file in the parent directory at C:\work\gits\jugg\webapp-compare-project\webapp-compare\README.md contains requirements for implementing a Doodle clone with 12 prioritized features including poll creation/viewing, preference storage, voting deadlines, login functionality, email notifications, internationalization, responsive design, user registration, and admin dashboard.
