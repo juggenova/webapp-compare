@@ -12,5 +12,3 @@ Con "setup iniziale" intendo tutto ciò che occorre per creare un ambiente di sv
 
 Augment Code si è comportato abbastanza bene. Inizialmente aveva messo alcuni file nel folder padre ma dopo mia segnalazione ha corretto il problema. Si era anche dimenticato di mettere il maven wrapper ma ha risolto velocemente.
 
-
-
