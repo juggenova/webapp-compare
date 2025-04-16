@@ -1,15 +1,32 @@
 package com.juggenova.doodleclone.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "polls")
 public class Poll {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(length = 255, nullable = false)
     private String title;
+
+    @Column(length = 1000)
     private String description;
+
+    @Column(name = "start_day", nullable = false)
     private LocalDate startDay;
+
+    @Column(name = "end_day", nullable = false)
     private LocalDate endDay;
+
+    @Column(nullable = false)
     private LocalDateTime deadline;
+
+    @Column(name = "chosen_day")
     private LocalDate chosenDay;
 
     public Poll() {

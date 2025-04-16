@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+/embedded-mariadb-data/
+/embedded-mariadb-base/
+
 ### STS ###
 .apt_generated
 .classpath

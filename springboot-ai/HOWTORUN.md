@@ -8,6 +8,23 @@ This document provides instructions for running the Doodle Clone application, wh
 - Node.js and npm
 - Maven (optional, as the project includes Maven wrapper)
 
+## Database
+
+The application uses an embedded MariaDB database for development, so you don't need to install a separate database server. The database is automatically created and initialized with the necessary schema and default data when the application starts.
+
+The database files are stored in the `./embedded-mariadb-data` directory. If you want to reset the database, you can delete this directory and restart the application.
+
+The application is designed to reuse existing database files if they exist, so your data will persist between application restarts.
+
+### Implementation Details
+
+- The application uses JPA for object-relational mapping
+- Database operations are performed through custom DAO (Data Access Object) classes
+- JPQL is used for most queries, with native SQL for more complex operations
+- Flyway handles database migrations and schema versioning
+- The implementation is compatible with MySQL in production
+- The embedded MariaDB database is managed by a custom implementation that properly handles database reopening
+
 ## Project Structure
 
 - `src/` - Spring Boot backend
@@ -70,11 +87,9 @@ The application currently implements:
 
 1. Basic poll viewing for the first week of November 2024
 2. Poll attributes (title, description, date range, voting deadline)
+3. Preference storage with server-side persistence using MariaDB
 
 Future versions will implement the remaining requirements:
-
-3. Preference storage
-4. Server-side storage of user preferences
 5. Automatic selection of the most voted day after deadline
 6. Post-deadline view showing the selected day
 7. Login functionality
